@@ -929,6 +929,78 @@
       return `${high}${low}${suitedFlag}`;
     }
 
+    function analyzeHandTraits(hand) {
+      const suited = hand.endsWith('s');
+      const pair = hand.length === 2 || hand[0] === hand[1];
+      const ranks = pair ? [hand[0], hand[1]] : [hand[0], hand[1]];
+      const connectors = !pair && Math.abs(rankOrder.indexOf(ranks[0]) - rankOrder.indexOf(ranks[1])) === 1;
+      const broadwayRanks = ['A', 'K', 'Q', 'J', 'T'];
+      const broadway = ranks.every((r) => broadwayRanks.includes(r));
+      const blockers = ranks.filter((r) => ['A', 'K', 'Q'].includes(r));
+
+      return { suited, pair, connectors, broadway, blockers, ranks };
+    }
+
+    function buildPreflopExplanation({ hand, position, action, isInOpenRange }) {
+      const traits = analyzeHandTraits(hand);
+      const reasons = [];
+
+      if (action === 'CHECK' && position === 'BB') {
+        reasons.push(`Checking ${hand} takes the free flop and lets you realize equity without risk.`);
+      } else if (action === 'RAISE') {
+        if (isInOpenRange) {
+          reasons.push(`${hand} lives inside the recommended ${position} opening range.`);
+        } else {
+          reasons.push(`${hand} falls outside the preferred ${position} opens and drifts into marginal territory.`);
+        }
+      } else if (action === 'FOLD') {
+        if (isInOpenRange) {
+          reasons.push(`Folding forfeits a profitable open with ${hand} from ${position}.`);
+        } else {
+          reasons.push(`${hand} misses the ${position} opening chart, so mucking keeps you out of trouble.`);
+        }
+      } else if (action === 'CALL') {
+        reasons.push(`Calling preflop without a raise plan leaves ${hand} under-realized.`);
+      }
+
+      if (['BTN', 'CO'].includes(position) && action === 'RAISE') {
+        reasons.push('Late position leverage lets you pressure blinds and control postflop decisions.');
+      }
+
+      if (position === 'SB' && action === 'RAISE') {
+        reasons.push('Opening from the small blind compensates for playing the rest of the hand out of position.');
+      }
+
+      if (traits.pair) {
+        reasons.push('Pocket pairs retain showdown value and can flop sets against callers.');
+      } else {
+        if (traits.broadway) {
+          reasons.push('Broadway combinations make top pairs with strong kickers versus blind defenses.');
+        }
+        if (traits.connectors) {
+          reasons.push('Connected ranks give straight potential when you do see flops.');
+        }
+      }
+
+      if (traits.suited) {
+        reasons.push('Suitedness adds playability through flush backdoors and draws.');
+      }
+
+      if (action === 'RAISE' && traits.blockers.length) {
+        reasons.push(`High-card blockers (${traits.blockers.join('/')}) cut down premium combos that can 3-bet you.`);
+      }
+
+      if (action === 'RAISE' && ['BTN', 'CO'].includes(position)) {
+        reasons.push('Both blinds must defend wide and out of position, so opens print fold equity.');
+      }
+
+      if (action === 'CHECK' && position === 'BB') {
+        reasons.push('With no price to continue, you realize equity versus the entire field.');
+      }
+
+      return reasons.join(' ');
+    }
+
     function evaluatePreflopOpen(position, hand, userAction) {
       const allowed = openRangesByPosition[position] || [];
       const isInOpenRange = allowed.includes(hand);
@@ -942,7 +1014,7 @@
               good: true,
               context: 'Safe but passive.',
               recommended: 'Raising prints more value.',
-              explanation: `Checking ${hand} in the big blind is never terrible when you get a free flop, but raising strong hands here builds a pot when you are ahead.`,
+              explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
             };
           } else {
             return {
@@ -950,7 +1022,7 @@
               good: true,
               context: 'Correct free check.',
               recommended: 'Checking is ideal.',
-              explanation: `With ${hand} in the big blind and no raise, checking to see a free flop is the highest-EV default. You realize your equity without risking chips preflop.`,
+              explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
             };
           }
         }
@@ -960,7 +1032,7 @@
             good: false,
             context: 'Too tight.',
             recommended: 'Check instead of folding.',
-            explanation: `Folding in the big blind when you can check for free throws away equity. Use the check option to see a flop instead of mucking.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
         // Raises in BB fall through to the generic logic below
@@ -973,7 +1045,7 @@
             good: true,
             context: 'Solid open.',
             recommended: 'Raise / open this hand.',
-            explanation: `${hand} is in your recommended open range from ${position}. Opening here applies pressure and prints value long term.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
         if (userAction === 'FOLD') {
@@ -982,7 +1054,7 @@
             good: false,
             context: 'Too tight.',
             recommended: 'Raise this hand instead of folding.',
-            explanation: `Folding ${hand} from ${position} is leaving money on the table. This hand should be opened in most lineups.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
         if (userAction === 'CALL') {
@@ -991,7 +1063,7 @@
             good: false,
             context: 'Leaky limp.',
             recommended: 'Raise, don\'t limp.',
-            explanation: `Limping ${hand} from ${position} is usually dominated and hard to play. Raising is higher EV and keeps your range aggressive.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
       } else {
@@ -1001,7 +1073,7 @@
             good: false,
             context: 'Too loose.',
             recommended: 'Fold this hand preflop.',
-            explanation: `${hand} is outside the recommended open range from ${position}. Opening hands like this loses money over time.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
         if (userAction === 'CALL') {
@@ -1010,7 +1082,7 @@
             good: false,
             context: 'Weak limp.',
             recommended: 'Just fold this hand.',
-            explanation: `Calling or limping ${hand} here is rarely profitable. In an unopened pot, you want to raise strong hands and fold the rest.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
         if (userAction === 'FOLD') {
@@ -1019,7 +1091,7 @@
             good: true,
             context: 'Good discipline.',
             recommended: 'Folding is correct.',
-            explanation: `${hand} is not in your profitable open range from ${position}. Folding keeps your range tight and avoids marginal spots.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
       }
@@ -1029,7 +1101,7 @@
         good: true,
         context: 'Reasonable.',
         recommended: 'Borderline, but not terrible.',
-        explanation: `This is a borderline spot for ${hand} from ${position}. Against tighter fields, folding is fine; against weak players, opening may be okay.`,
+        explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
       };
     }
 
