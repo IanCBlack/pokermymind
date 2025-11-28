@@ -1139,6 +1139,14 @@
       primaryBtn.innerHTML = 'Deal new hand<span>♠</span>';
     }
 
+    function resetResultBox() {
+      gradeLetterEl.textContent = '–';
+      gradeLetterEl.classList.remove('grade-badge-good', 'grade-badge-bad');
+      gradeContextEl.textContent = 'Awaiting decision.';
+      recommendationEl.textContent = 'Pick an action and evaluate to see feedback.';
+      explanationEl.textContent = 'Lock in an action for this hand to get a recommendation and grade.';
+    }
+
     function resetEvaluateState() {
       hasEvaluatedCurrent = false;
       awaitingManualDeal = false;
@@ -1183,6 +1191,7 @@
       // Clear selected action on new deal
       selectedAction = null;
       actionButtonsEl.querySelectorAll('.action-btn').forEach(b => b.classList.remove('selected'));
+      resetResultBox();
       resetEvaluateState();
       updateActionsForPosition();
     }
@@ -1248,6 +1257,13 @@
             primaryBtn.disabled = false;
             setPrimaryBtnToDeal();
           }
+        } else if (hasEvaluatedCurrent) {
+          // If we toggle on auto-deal after grading in manual mode, start the auto cadence
+          awaitingManualDeal = false;
+          primaryBtn.classList.add('disabled');
+          primaryBtn.setAttribute('aria-disabled', 'true');
+          primaryBtn.disabled = true;
+          startAutoDealCountdown();
         }
       });
     }
