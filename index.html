@@ -437,6 +437,43 @@
       gap: 0.4rem;
     }
 
+    .report-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .report-grade {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #58d1ff);
+      color: #05060a;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      box-shadow: 0 10px 25px rgba(39,201,168,0.35);
+    }
+
+    .report-text {
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .report-percent {
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
     .stat-chip {
       font-size: 0.75rem;
       padding: 0.18rem 0.55rem;
@@ -765,6 +802,13 @@
                   <span class="stat-chip" id="statTotal">Decisions: 0</span>
                   <span class="stat-chip good" id="statGood">Good (A/B): 0</span>
                   <span class="stat-chip leaky" id="statLeaky">Leaky (C–F): 0</span>
+                </div>
+                <div class="report-card" aria-label="Overall report card">
+                  <span class="report-grade" id="reportGrade">–</span>
+                  <span class="report-text">
+                    Overall grade
+                    <span class="report-percent" id="reportPercent">–</span>
+                  </span>
                 </div>
                 <button type="button" class="ghost-btn" id="resetStatsBtn">
                   Reset stats
@@ -1323,11 +1367,31 @@
         // ignore
       }
     }
+    function calculateReportCard(stats) {
+      if (!stats.total) {
+        return { letter: '–', percent: '0%' };
+      }
+      const percent = Math.round((stats.good / stats.total) * 100);
+      let letter = 'F';
+      if (percent >= 90) {
+        letter = 'A';
+      } else if (percent >= 80) {
+        letter = 'B';
+      } else if (percent >= 70) {
+        letter = 'C';
+      } else if (percent >= 60) {
+        letter = 'D';
+      }
+      return { letter, percent: `${percent}%` };
+    }
     function updateStatsUI() {
       const stats = loadStats();
       document.getElementById('statTotal').textContent = `Decisions: ${stats.total}`;
       document.getElementById('statGood').textContent = `Good (A/B): ${stats.good}`;
       document.getElementById('statLeaky').textContent = `Leaky (C–F): ${stats.leaky}`;
+      const report = calculateReportCard(stats);
+      document.getElementById('reportGrade').textContent = report.letter;
+      document.getElementById('reportPercent').textContent = report.percent;
     }
     updateStatsUI();
 
