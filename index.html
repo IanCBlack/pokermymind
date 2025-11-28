@@ -413,11 +413,20 @@
       color: var(--muted);
     }
 
+    .stats-card {
+      margin-top: 0.7rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 14px;
+      background: rgba(4, 8, 16, 0.9);
+      border: 1px solid rgba(255,255,255,0.06);
+      display: grid;
+      gap: 0.45rem;
+    }
+
     .stats-row {
       display: flex;
       flex-wrap: wrap;
       gap: 0.4rem;
-      margin-top: 0.5rem;
       align-items: center;
       justify-content: space-between;
     }
@@ -435,6 +444,18 @@
       background: rgba(255,255,255,0.02);
       border: 1px solid rgba(255,255,255,0.06);
       color: var(--muted);
+    }
+
+    .stat-chip.good {
+      background: rgba(39, 201, 168, 0.12);
+      border-color: rgba(39, 201, 168, 0.45);
+      color: var(--accent);
+    }
+
+    .stat-chip.leaky {
+      background: rgba(255, 83, 112, 0.08);
+      border-color: rgba(255, 83, 112, 0.4);
+      color: var(--danger);
     }
 
     .two-col {
@@ -660,7 +681,7 @@
                   POS: <strong>BTN</strong>
                 </div>
                 <div class="auto-deal">
-                  <span class="small-note">Auto deal</span>
+                  <span class="small-note">Auto deal if A</span>
                   <button type="button" class="auto-toggle" id="autoDealToggle" aria-pressed="false">Off</button>
                 </div>
               </div>
@@ -737,11 +758,13 @@
                 <span>Spot: Unopened pot</span>
                 <span>Model: Simple cash-game open ranges</span>
               </div>
+            </div>
+            <div class="stats-card" aria-label="Session status">
               <div class="stats-row" id="statsRow">
                 <div class="stat-group">
                   <span class="stat-chip" id="statTotal">Decisions: 0</span>
-                  <span class="stat-chip" id="statGood">Good (A/B): 0</span>
-                  <span class="stat-chip" id="statLeaky">Leaky (C–F): 0</span>
+                  <span class="stat-chip good" id="statGood">Good (A/B): 0</span>
+                  <span class="stat-chip leaky" id="statLeaky">Leaky (C–F): 0</span>
                 </div>
                 <button type="button" class="ghost-btn" id="resetStatsBtn">
                   Reset stats
@@ -1151,6 +1174,7 @@
     let autoDealEnabled = false;
     let awaitingManualDeal = false;
     let autoDealTimeoutId = null;
+    let lastEvalGrade = null;
 
     function randomFrom(arr) {
       return arr[Math.floor(Math.random() * arr.length)];
@@ -1222,6 +1246,7 @@
     function resetEvaluateState() {
       hasEvaluatedCurrent = false;
       awaitingManualDeal = false;
+      lastEvalGrade = null;
       clearAutoDealTimer();
       setPrimaryBtnToEvaluate();
       primaryBtn.classList.remove('disabled');
@@ -1330,17 +1355,29 @@
             setPrimaryBtnToDeal();
           }
         } else if (hasEvaluatedCurrent) {
-          // If we toggle on auto-deal after grading in manual mode, start the auto cadence
+          // If we toggle on auto-deal after grading in manual mode, start the auto cadence only after A grades
           awaitingManualDeal = false;
-          primaryBtn.classList.add('disabled');
-          primaryBtn.setAttribute('aria-disabled', 'true');
-          primaryBtn.disabled = true;
-          startAutoDealCountdown();
+          if (lastEvalGrade === 'A') {
+            primaryBtn.classList.add('disabled');
+            primaryBtn.setAttribute('aria-disabled', 'true');
+            primaryBtn.disabled = true;
+            startAutoDealCountdown();
+          } else {
+            clearAutoDealTimer();
+            awaitingManualDeal = true;
+            primaryBtn.classList.remove('disabled');
+            primaryBtn.removeAttribute('aria-disabled');
+            primaryBtn.disabled = false;
+            setPrimaryBtnToDeal();
+          }
         }
       });
     }
 
     function startAutoDealCountdown() {
+      if (lastEvalGrade !== 'A') {
+        return;
+      }
       clearAutoDealTimer();
       if (!autoDealTimerEl || !autoDealBarEl) {
         autoDealTimeoutId = setTimeout(() => {
@@ -1373,7 +1410,7 @@
     primaryBtn.addEventListener('click', () => {
       // If we're in manual mode and waiting to deal the next hand,
       // this button acts as "Deal new hand"
-      if (awaitingManualDeal && !autoDealEnabled) {
+      if (awaitingManualDeal && (!autoDealEnabled || lastEvalGrade !== 'A')) {
         dealScenario();
         return;
       }
@@ -1397,6 +1434,8 @@
       const hand = currentCanonicalHand;
       const evalResult = evaluatePreflopOpen(position, hand, selectedAction);
 
+      lastEvalGrade = evalResult.grade;
+
       gradeLetterEl.textContent = evalResult.grade;
       gradeLetterEl.classList.toggle('grade-badge-good', evalResult.good);
       gradeLetterEl.classList.toggle('grade-badge-bad', !evalResult.good);
@@ -1418,14 +1457,15 @@
       hasEvaluatedCurrent = true;
       updateActionsForPosition();
 
-      if (autoDealEnabled) {
-        // Auto mode: lock button, show timer, auto-deal after 2s
+      if (autoDealEnabled && evalResult.grade === 'A') {
+        // Auto mode: lock button, show timer, auto-deal after 2s when user nails an A
         primaryBtn.classList.add('disabled');
         primaryBtn.setAttribute('aria-disabled', 'true');
         primaryBtn.disabled = true;
         startAutoDealCountdown();
       } else {
-        // Manual mode: turn this button into "Deal new hand"
+        // Manual mode or auto paused on non-A grades: turn this button into "Deal new hand"
+        clearAutoDealTimer();
         awaitingManualDeal = true;
         primaryBtn.classList.remove('disabled');
         primaryBtn.removeAttribute('aria-disabled');
