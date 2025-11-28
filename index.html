@@ -1088,16 +1088,14 @@
       if (!callBtn || !checkBtn) return;
       const allActionBtns = actionButtonsEl.querySelectorAll('.action-btn');
 
-      if (currentPosition === 'BB') {
+      const isBigBlind = currentPosition === 'BB';
+
+      if (isBigBlind) {
         // Show Check, disable Call/Limp
         checkBtn.style.display = 'flex';
-        callBtn.classList.add('disabled');
-        callBtn.setAttribute('aria-disabled', 'true');
         callBtn.title = 'In the big blind with no raise, you don\'t call – checking is free.';
       } else {
         checkBtn.style.display = 'none';
-        callBtn.classList.remove('disabled');
-        callBtn.removeAttribute('aria-disabled');
         callBtn.title = 'Limping = calling the big blind preflop instead of raising.';
 
         // If we were on CHECK before and moved off BB, clear back to no selection
@@ -1106,8 +1104,19 @@
         }
       }
 
-      // Ensure selected visual state matches selectedAction
+      // Disable all buttons once a decision has been evaluated
+      // or disable Call/Limp specifically in the big blind.
       allActionBtns.forEach(b => {
+        const isCallButton = b.dataset.action === 'CALL';
+        const shouldDisable = hasEvaluatedCurrent || (isBigBlind && isCallButton);
+
+        b.classList.toggle('disabled', shouldDisable);
+        if (shouldDisable) {
+          b.setAttribute('aria-disabled', 'true');
+        } else {
+          b.removeAttribute('aria-disabled');
+        }
+
         b.classList.toggle('selected', b.dataset.action === selectedAction);
       });
     }
@@ -1174,8 +1183,8 @@
       // Clear selected action on new deal
       selectedAction = null;
       actionButtonsEl.querySelectorAll('.action-btn').forEach(b => b.classList.remove('selected'));
-      updateActionsForPosition();
       resetEvaluateState();
+      updateActionsForPosition();
     }
 
     actionButtonsEl.addEventListener('click', (e) => {
@@ -1319,6 +1328,7 @@
 
       // Lock this scenario – only one graded decision per hand
       hasEvaluatedCurrent = true;
+      updateActionsForPosition();
 
       if (autoDealEnabled) {
         // Auto mode: lock button, show timer, auto-deal after 2s
