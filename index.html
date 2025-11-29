@@ -1785,8 +1785,8 @@
       }
 
       primaryBtn.addEventListener("click", () => {
-        if (awaitingManualDeal && !autoDealEnabled) {
-          // In manual mode after a graded decision, this button deals the next hand
+        if (awaitingManualDeal) {
+          // After a graded decision that requires manual progression, deal the next hand
           dealScenario();
           return;
         }
