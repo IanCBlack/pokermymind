@@ -517,6 +517,14 @@
         position: absolute;
         inset: 0;
         width: 0%;
+        background: linear-gradient(90deg, rgba(18, 21, 30, 0.92), rgba(78, 86, 103, 0.94));
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+          inset 2px 0 12px rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transition: width 0.05s linear, opacity 0.14s ease-out;
+        pointer-events: none;
+        z-index: 0;
         background: linear-gradient(90deg, rgba(22, 25, 33, 0.92), rgba(44, 48, 60, 0.9));
         box-shadow:
           inset 0 0 0 1px rgba(255, 255, 255, 0.06),
@@ -563,6 +571,7 @@
 
       .primary-btn.timer-active .primary-progress {
         opacity: 1;
+        background: linear-gradient(90deg, rgba(26, 30, 40, 0.94), rgba(105, 115, 136, 0.96));
       }
 
       .primary-btn.timer-active {
@@ -1640,6 +1649,13 @@
         }
       }
 
+      function updateAutoDealToggleUI() {
+        if (!autoDealToggle) return;
+        autoDealToggle.setAttribute("aria-pressed", autoDealEnabled ? "true" : "false");
+        autoDealToggle.classList.toggle("active", autoDealEnabled);
+        autoDealToggle.textContent = autoDealEnabled ? "On" : "Off";
+      }
+
       function clearAutoDealTimer() {
         if (autoDealTimeoutId !== null) {
           clearTimeout(autoDealTimeoutId);
@@ -1786,8 +1802,10 @@
       syncAutoDealToggle();
 
       if (autoDealToggle) {
+        updateAutoDealToggleUI();
         autoDealToggle.addEventListener("click", () => {
           autoDealEnabled = !autoDealEnabled;
+          updateAutoDealToggleUI();
           syncAutoDealToggle();
           if (!autoDealEnabled) {
             clearAutoDealTimer();
