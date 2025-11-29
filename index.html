@@ -943,9 +943,9 @@
                   type="button"
                   class="auto-toggle"
                   id="autoDealToggle"
-                  aria-pressed="false"
+                  aria-pressed="true"
                 >
-                  Off
+                  On
                 </button>
               </div>
             </div>
@@ -1561,7 +1561,7 @@
       let currentCanonicalHand = "AA";
       let selectedAction = null;
       let hasEvaluatedCurrent = false;
-      let autoDealEnabled = false;
+      let autoDealEnabled = true;
       let awaitingManualDeal = false;
       let autoDealTimeoutId = null;
       let lastEvalGrade = null;
@@ -1776,12 +1776,19 @@
         resetResultBox();
       });
 
+      function syncAutoDealToggle() {
+        if (!autoDealToggle) return;
+        autoDealToggle.setAttribute("aria-pressed", autoDealEnabled ? "true" : "false");
+        autoDealToggle.classList.toggle("active", autoDealEnabled);
+        autoDealToggle.textContent = autoDealEnabled ? "On" : "Off";
+      }
+
+      syncAutoDealToggle();
+
       if (autoDealToggle) {
         autoDealToggle.addEventListener("click", () => {
           autoDealEnabled = !autoDealEnabled;
-          autoDealToggle.setAttribute("aria-pressed", autoDealEnabled ? "true" : "false");
-          autoDealToggle.classList.toggle("active", autoDealEnabled);
-          autoDealToggle.textContent = autoDealEnabled ? "On" : "Off";
+          syncAutoDealToggle();
           if (!autoDealEnabled) {
             clearAutoDealTimer();
             if (hasEvaluatedCurrent && !awaitingManualDeal) {
@@ -1829,9 +1836,7 @@
               }
             }, finishHoldMs);
           }
-        }
-
-        requestAnimationFrame(step);
+        }, duration + finishHoldMs);
       }
 
       primaryBtn.addEventListener("click", () => {
