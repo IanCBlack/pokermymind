@@ -517,6 +517,14 @@
         position: absolute;
         inset: 0;
         width: 0%;
+        background: linear-gradient(90deg, rgba(235, 238, 243, 0.92), rgba(124, 132, 144, 0.94));
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+          inset 3px 0 22px rgba(5, 6, 10, 0.5);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.18s ease-out;
+        z-index: 0;
         background: linear-gradient(90deg, rgba(18, 21, 30, 0.92), rgba(78, 86, 103, 0.94));
         box-shadow:
           inset 0 0 0 1px rgba(255, 255, 255, 0.08),
@@ -536,6 +544,16 @@
 
       .primary-btn.timer-active .primary-progress {
         opacity: 1;
+        animation: primaryFill 2s linear forwards;
+      }
+
+      @keyframes primaryFill {
+        from {
+          width: 0%;
+        }
+        to {
+          width: 100%;
+        }
       }
 
       .primary-btn.timer-active {
@@ -1662,6 +1680,7 @@
           autoDealTimeoutId = null;
         }
         if (autoDealBarEl) {
+          autoDealBarEl.style.animation = "none";
           autoDealBarEl.style.width = "0%";
         }
         primaryBtn.classList.remove("timer-active");
@@ -1833,6 +1852,20 @@
           }, 2000);
           return;
         }
+
+        primaryBtn.classList.add("timer-active");
+        autoDealBarEl.style.animation = "none";
+        autoDealBarEl.style.width = "0%";
+        // Force reflow so restarting animation works consistently
+        void autoDealBarEl.offsetWidth;
+        autoDealBarEl.style.animation = "primaryFill 2s linear forwards";
+
+        const duration = 2000;
+        const finishHoldMs = 140;
+        autoDealTimeoutId = setTimeout(() => {
+          if (autoDealEnabled && hasEvaluatedCurrent && lastEvalGrade === "A") {
+            dealScenario();
+            clearAutoDealTimer();
         primaryBtn.classList.add("timer-active");
         autoDealBarEl.style.width = "0%";
         const start = performance.now();
