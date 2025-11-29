@@ -1,1575 +1,1858 @@
 <!DOCTYPE html>
-<!-- saved from url=(0040)https://iancblack.github.io/pokermymind/ -->
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  
-  <title>Poker My Mind – Preflop Trainer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    :root {
-      --bg: #05060a;
-      --bg-alt: #10121b;
-      --card-bg: #151827;
-      --accent: #27c9a8;
-      --accent-soft: rgba(39, 201, 168, 0.14);
-      --danger: #ff5370;
-      --text: #f8f9ff;
-      --muted: #a3aec7;
-      --border: #26293a;
-      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Poker My Mind – Preflop Trainer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        --bg: #05060a;
+        --bg-alt: #10121b;
+        --card-bg: #151827;
+        --accent: #27c9a8;
+        --accent-soft: rgba(39, 201, 168, 0.14);
+        --danger: #ff5370;
+        --text: #f8f9ff;
+        --muted: #a3aec7;
+        --border: #26293a;
+        --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
 
-    * {
-      box-sizing: border-box;
-    }
+      * {
+        box-sizing: border-box;
+      }
 
-    body {
-      margin: 0;
-      font-family: var(--font);
-      background: radial-gradient(circle at top, #14172a, #05060a 55%);
-      color: var(--text);
-      -webkit-font-smoothing: antialiased;
-    }
+      body {
+        margin: 0;
+        font-family: var(--font);
+        background: radial-gradient(circle at top, #14172a, #05060a 55%);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+      }
 
-    .app-shell {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 1.25rem 1rem 2.5rem;
-    }
-
-    @media (min-width: 768px) {
       .app-shell {
-        padding: 2rem 1.5rem 3rem;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 1.25rem 1rem 2.5rem;
       }
-    }
 
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
+      @media (min-width: 768px) {
+        .app-shell {
+          padding: 2rem 1.5rem 3rem;
+        }
+      }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
 
-    .logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background:
-        radial-gradient(circle at 20% 0%, rgba(39,201,168,0.4), transparent 55%),
-        radial-gradient(circle at 75% 100%, rgba(114,137,252,0.4), transparent 55%),
-        #05060a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      box-shadow:
-        0 0 0 1px rgba(0,0,0,0.6),
-        0 18px 35px rgba(0,0,0,0.7);
-    }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
 
-    .brand-title {
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      font-size: 0.9rem;
-      color: var(--muted);
-    }
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background:
+          radial-gradient(circle at 20% 0%, rgba(39, 201, 168, 0.4), transparent 55%),
+          radial-gradient(circle at 75% 100%, rgba(114, 137, 252, 0.4), transparent 55%),
+          #05060a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        box-shadow:
+          0 0 0 1px rgba(0, 0, 0, 0.6),
+          0 18px 35px rgba(0, 0, 0, 0.7);
+      }
 
-    .brand-name {
-      font-size: 1.4rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-    }
+      .brand-title {
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
 
-    .tagline {
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-top: 0.15rem;
-    }
+      .brand-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
 
-    .nav {
-      display: inline-flex;
-      background: rgba(8,10,20,0.85);
-      border-radius: 999px;
-      padding: 0.18rem;
-      border: 1px solid rgba(255,255,255,0.06);
-      box-shadow: 0 12px 25px rgba(0,0,0,0.55);
-    }
+      .tagline {
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-top: 0.15rem;
+      }
 
-    .nav button {
-      border: none;
-      background: transparent;
-      color: var(--muted);
-      padding: 0.35rem 0.9rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.18s ease-out;
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-      white-space: nowrap;
-    }
+      .nav {
+        display: inline-flex;
+        background: rgba(8, 10, 20, 0.85);
+        border-radius: 999px;
+        padding: 0.18rem;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.55);
+      }
 
-    .nav button.active {
-      background: linear-gradient(135deg, var(--accent), #58d1ff);
-      color: #05060a;
-      box-shadow: 0 6px 18px rgba(39,201,168,0.45);
-    }
+      .nav button {
+        border: none;
+        background: transparent;
+        color: var(--muted);
+        padding: 0.35rem 0.9rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.18s ease-out;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        white-space: nowrap;
+      }
 
-    main {
-      display: grid;
-      gap: 1rem;
-    }
+      .nav button.active {
+        background: linear-gradient(135deg, var(--accent), #58d1ff);
+        color: #05060a;
+        box-shadow: 0 6px 18px rgba(39, 201, 168, 0.45);
+      }
 
-    .card {
-      background: linear-gradient(145deg, rgba(18,20,36,0.98), rgba(6,8,16,0.98));
-      border-radius: 20px;
-      padding: 1rem;
-      border: 1px solid var(--border);
-      box-shadow:
-        0 18px 40px rgba(0,0,0,0.7),
-        0 0 0 1px rgba(255,255,255,0.02);
-    }
+      main {
+        display: grid;
+        gap: 1rem;
+      }
 
-    @media (min-width: 768px) {
       .card {
-        padding: 1.25rem 1.4rem;
+        background: linear-gradient(145deg, rgba(18, 20, 36, 0.98), rgba(6, 8, 16, 0.98));
+        border-radius: 20px;
+        padding: 1rem;
+        border: 1px solid var(--border);
+        box-shadow:
+          0 18px 40px rgba(0, 0, 0, 0.7),
+          0 0 0 1px rgba(255, 255, 255, 0.02);
       }
-    }
 
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 0.5rem;
-      margin-bottom: 0.6rem;
-    }
-
-    .card-title {
-      font-size: 1rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .card-subtitle {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .pill {
-      font-size: 0.7rem;
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: 600;
-    }
-
-    .form-grid {
-      display: grid;
-      gap: 0.8rem;
-    }
-
-    @media (min-width: 640px) {
-      .form-grid {
-        grid-template-columns: 1.2fr 1fr;
-        align-items: flex-start;
+      @media (min-width: 768px) {
+        .card {
+          padding: 1.25rem 1.4rem;
+        }
       }
-    }
 
-    .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
+      /* ---------- Preflop layout (wireframe-aligned) ---------- */
+      .preflop-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
 
-    label {
-      font-size: 0.8rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 600;
-    }
+      .preflop-scenario-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.8rem;
+        padding: 0.65rem 0.75rem;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border);
+      }
 
-    select, input[type="number"] {
-      width: 100%;
-      padding: 0.55rem 0.7rem;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: rgba(6,8,16,0.95);
-      color: var(--text);
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.18s ease-out, box-shadow 0.18s ease-out, background 0.18s ease-out;
-      appearance: none;
-    }
+      .scenario-main {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        min-width: 0;
+      }
 
-    select:focus, input[type="number"]:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(39,201,168,0.35);
-      background: rgba(13,17,30,0.98);
-    }
+      .scenario-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
 
-    .hand-row {
-      display: flex;
-      gap: 0.6rem;
-      align-items: center;
-      flex-wrap: wrap;
-    }
+      .scenario-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        font-weight: 600;
+      }
 
-    .hand-preview {
-      font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
-      font-size: 0.9rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.09);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
+      .scenario-controls {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.25rem;
+        margin-left: auto;
+      }
 
-    .hand-preview span {
-      opacity: 0.7;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
+      @media (max-width: 480px) {
+        .scenario-controls {
+          align-items: flex-start;
+        }
+      }
 
-    .actions-row {
-      display: flex;
-      gap: 0.4rem;
-      flex-wrap: wrap;
-    }
+      .section-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+      }
 
-    .action-btn {
-      flex: 1 0 0;
-      min-width: 0;
-      padding: 0.5rem 0.6rem;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: rgba(5,8,16,0.98);
-      color: var(--muted);
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.25rem;
-      transition: all 0.16s ease-out;
-    }
+      .preflop-top {
+        display: grid;
+        gap: 1rem;
+      }
 
-    .action-btn.selected {
-      border-color: var(--accent);
-      background: var(--accent-soft);
-      color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(39,201,168,0.28);
-    }
+      @media (min-width: 640px) {
+        .preflop-top {
+          grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+          align-items: stretch;
+        }
+      }
 
-    .action-btn.disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      border-style: dashed;
-    }
+      .preflop-dealt-cards,
+      .preflop-position-info {
+        padding: 0.8rem 0.9rem;
+        border-radius: 16px;
+        background: rgba(7, 9, 20, 0.9);
+        border: 1px solid var(--border);
+      }
 
-    .primary-btn {
-      margin-top: 0.5rem;
-      width: 100%;
-      padding: 0.6rem 0.9rem;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(135deg, var(--accent), #58d1ff);
-      color: #05060a;
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      cursor: pointer;
-      box-shadow: 0 10px 24px rgba(39,201,168,0.4);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
-      transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, filter 0.08s ease-out;
-    }
+      .preflop-dealt-cards .card-strip {
+        margin-top: 0.1rem;
+      }
 
-    .primary-btn:active {
-      transform: translateY(1px);
-      box-shadow: 0 6px 18px rgba(39,201,168,0.35);
-      filter: brightness(0.97);
-    }
+      .preflop-position-info .position-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
 
-    .primary-btn.disabled {
-      opacity: 0.45;
-      cursor: default;
-      box-shadow: none;
-      filter: grayscale(0.2) brightness(0.85);
-    }
+      .position-map {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.4rem;
+      }
 
-    .ghost-btn {
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(4,6,12,0.8);
-      color: var(--muted);
-      font-size: 0.78rem;
-      padding: 0.3rem 0.75rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      text-transform: uppercase;
-      letter-spacing: 0.11em;
-      font-weight: 600;
-      transition: all 0.16s ease-out;
-    }
+      .position-seat {
+        font-size: 0.78rem;
+        padding: 0.3rem 0.4rem;
+        border-radius: 999px;
+        border: 1px dashed rgba(255, 255, 255, 0.18);
+        text-align: center;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
 
-    .ghost-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+      .position-seat.active {
+        border-style: solid;
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
 
-    .result {
-      margin-top: 0.8rem;
-      padding: 0.65rem 0.75rem;
-      border-radius: 14px;
-      background: rgba(5,9,20,0.95);
-      border: 1px solid rgba(255,255,255,0.06);
-      display: grid;
-      gap: 0.4rem;
-    }
+      .position-note {
+        margin: 0;
+      }
 
-    .grade-pill {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 0.4rem;
-    }
+      .preflop-actions {
+        padding: 0.7rem 0.9rem 0.3rem;
+        border-radius: 16px;
+        background: rgba(5, 8, 18, 0.9);
+        border: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
 
-    .grade-letter {
-      font-size: 1.4rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-    }
+      .preflop-actions .actions-row {
+        margin-top: 0.15rem;
+      }
 
-    .grade-context {
-      font-size: 0.8rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
+      .preflop-primary {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        align-items: stretch;
+      }
 
-    .grade-badge-good {
-      color: var(--accent);
-    }
+      .preflop-feedback {
+        margin-top: 0.3rem;
+        padding: 0.85rem 0.9rem;
+        border-radius: 18px;
+        background: rgba(4, 6, 16, 0.95);
+        border: 1px solid var(--border);
+        display: grid;
+        gap: 0.75rem;
+      }
 
-    .grade-badge-bad {
-      color: var(--danger);
-    }
+      @media (min-width: 768px) {
+        .preflop-feedback {
+          grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+          align-items: flex-start;
+        }
+      }
 
-    .recommendation {
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
+      .preflop-feedback .result,
+      .preflop-feedback .stats-card {
+        margin-top: 0;
+      }
 
-    .explanation {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.45;
-    }
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 0.5rem;
+        margin-bottom: 0.6rem;
+      }
 
-    .meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 0.2rem;
-    }
+      .card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
 
-    .meta span {
-      font-size: 0.75rem;
-      padding: 0.16rem 0.5rem;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--muted);
-    }
+      .card-subtitle {
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
 
-    .stats-card {
-      margin-top: 0.7rem;
-      padding: 0.6rem 0.75rem;
-      border-radius: 14px;
-      background: rgba(4, 8, 16, 0.9);
-      border: 1px solid rgba(255,255,255,0.06);
-      display: grid;
-      gap: 0.45rem;
-    }
+      .pill {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+      }
 
-    .stats-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      align-items: center;
-      justify-content: space-between;
-    }
+      .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
 
-    .stat-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
+      label {
+        font-size: 0.8rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 600;
+      }
 
-    .report-card {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.4rem 0.7rem;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
-      font-weight: 600;
-      letter-spacing: 0.02em;
-    }
+      select,
+      input[type="number"] {
+        width: 100%;
+        padding: 0.55rem 0.7rem;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(6, 8, 16, 0.95);
+        color: var(--text);
+        font-size: 0.9rem;
+        outline: none;
+        transition:
+          border-color 0.18s ease-out,
+          box-shadow 0.18s ease-out,
+          background 0.18s ease-out;
+        appearance: none;
+      }
 
-    .report-grade {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), #58d1ff);
-      color: #05060a;
-      display: grid;
-      place-items: center;
-      font-size: 1rem;
-      box-shadow: 0 10px 25px rgba(39,201,168,0.35);
-    }
+      select:focus,
+      input[type="number"]:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(39, 201, 168, 0.35);
+        background: rgba(13, 17, 30, 0.98);
+      }
 
-    .report-text {
-      color: var(--muted);
-      display: flex;
-      flex-direction: column;
-      line-height: 1.2;
-    }
+      .hand-row {
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
 
-    .report-percent {
-      color: var(--text);
-      font-size: 0.95rem;
-    }
+      .hand-preview {
+        font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+        font-size: 0.9rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
 
-    .stat-chip {
-      font-size: 0.75rem;
-      padding: 0.18rem 0.55rem;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.06);
-      color: var(--muted);
-    }
+      .hand-preview span {
+        opacity: 0.7;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
 
-    .stat-chip.good {
-      background: rgba(39, 201, 168, 0.12);
-      border-color: rgba(39, 201, 168, 0.45);
-      color: var(--accent);
-    }
+      .toggle-group {
+        display: inline-flex;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+        background: rgba(3, 5, 11, 0.9);
+      }
 
-    .stat-chip.leaky {
-      background: rgba(255, 83, 112, 0.08);
-      border-color: rgba(255, 83, 112, 0.4);
-      color: var(--danger);
-    }
+      .toggle-group button {
+        border: none;
+        padding: 0.28rem 0.7rem;
+        font-size: 0.8rem;
+        color: var(--muted);
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.16s ease-out;
+      }
 
-    .two-col {
-      display: grid;
-      gap: 0.8rem;
-    }
+      .toggle-group button.active {
+        background: var(--accent-soft);
+        color: var(--accent);
+      }
 
-    @media (min-width: 640px) {
+      .actions-row {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+      }
+
+      .action-btn {
+        flex: 1 0 0;
+        min-width: 0;
+        padding: 0.5rem 0.6rem;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: rgba(5, 8, 16, 0.98);
+        color: var(--muted);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        transition: all 0.16s ease-out;
+      }
+
+      .action-btn.selected {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent);
+        box-shadow: 0 0 0 1px rgba(39, 201, 168, 0.28);
+      }
+
+      .action-btn.disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        border-style: dashed;
+      }
+
+      .primary-btn {
+        margin-top: 0.5rem;
+        width: 100%;
+        padding: 0.6rem 0.9rem;
+        border-radius: 999px;
+        border: none;
+        background: linear-gradient(135deg, var(--accent), #58d1ff);
+        color: #05060a;
+        font-size: 0.9rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        cursor: pointer;
+        box-shadow: 0 10px 24px rgba(39, 201, 168, 0.4);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        transition:
+          transform 0.08s ease-out,
+          box-shadow 0.08s ease-out,
+          filter 0.08s ease-out;
+      }
+
+      .primary-btn:active {
+        transform: translateY(1px);
+        box-shadow: 0 6px 18px rgba(39, 201, 168, 0.35);
+        filter: brightness(0.97);
+      }
+
+      .primary-btn.disabled {
+        opacity: 0.45;
+        cursor: default;
+        box-shadow: none;
+        filter: grayscale(0.2) brightness(0.85);
+      }
+
+      .ghost-btn {
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(4, 6, 12, 0.8);
+        color: var(--muted);
+        font-size: 0.78rem;
+        padding: 0.3rem 0.75rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        text-transform: uppercase;
+        letter-spacing: 0.11em;
+        font-weight: 600;
+        transition: all 0.16s ease-out;
+      }
+
+      .ghost-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .result {
+        margin-top: 0.8rem;
+        padding: 0.65rem 0.75rem;
+        border-radius: 14px;
+        background: rgba(5, 9, 20, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        display: grid;
+        gap: 0.4rem;
+      }
+
+      .grade-pill {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.4rem;
+      }
+
+      .grade-letter {
+        font-size: 1.4rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+      }
+
+      .grade-context {
+        font-size: 0.8rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      .grade-badge-good {
+        color: var(--accent);
+      }
+
+      .grade-badge-bad {
+        color: var(--danger);
+      }
+
+      .recommendation {
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .explanation {
+        font-size: 0.9rem;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-top: 0.2rem;
+      }
+
+      .meta span {
+        font-size: 0.75rem;
+        padding: 0.16rem 0.5rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--muted);
+      }
+
+      .stats-card {
+        margin-top: 0.7rem;
+        padding: 0.6rem 0.75rem;
+        border-radius: 14px;
+        background: rgba(4, 8, 16, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        display: grid;
+        gap: 0.45rem;
+      }
+
+      .stats-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .stat-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+
+      .stat-chip {
+        font-size: 0.75rem;
+        padding: 0.18rem 0.55rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: var(--muted);
+      }
+
+      .report-card {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .report-grade {
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .report-text {
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .report-percent {
+        margin-left: 0.25rem;
+        font-size: 0.78rem;
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .stat-chip.good {
+        background: rgba(39, 201, 168, 0.12);
+        border-color: rgba(39, 201, 168, 0.45);
+        color: var(--accent);
+      }
+
+      .stat-chip.leaky {
+        background: rgba(255, 83, 112, 0.08);
+        border-color: rgba(255, 83, 112, 0.4);
+        color: var(--danger);
+      }
+
       .two-col {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        display: grid;
+        gap: 0.8rem;
       }
-    }
 
-    .muted-note {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 0.4rem;
-    }
+      @media (min-width: 640px) {
+        .two-col {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
 
-    .small-note {
-      font-size: 0.76rem;
-      color: var(--muted);
-      opacity: 0.8;
-    }
+      .muted-note {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-top: 0.4rem;
+      }
 
-    .about-text {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.45;
-    }
+      .small-note {
+        font-size: 0.76rem;
+        color: var(--muted);
+        opacity: 0.8;
+      }
 
-    .about-text strong {
-      color: var(--text);
-    }
+      .about-text {
+        font-size: 0.9rem;
+        color: var(--muted);
+        line-height: 1.45;
+      }
 
-    footer {
-      margin-top: 1.4rem;
-      font-size: 0.75rem;
-      color: var(--muted);
-      text-align: center;
-      opacity: 0.7;
-    }
+      .about-text strong {
+        color: var(--text);
+      }
 
-    /* Scenario strip & cards */
-    .scenario-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      align-items: center;
-      justify-content: space-between;
-    }
+      footer {
+        margin-top: 1.4rem;
+        font-size: 0.75rem;
+        color: var(--muted);
+        text-align: center;
+        opacity: 0.7;
+      }
 
-    .scenario-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.22rem 0.7rem;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.11em;
-      color: var(--muted);
-    }
+      /* Scenario strip & cards */
+      .scenario-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.22rem 0.7rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.11em;
+        color: var(--muted);
+      }
 
-    .scenario-pill strong {
-      color: var(--text);
-      letter-spacing: 0.06em;
-    }
+      .scenario-pill strong {
+        color: var(--text);
+        letter-spacing: 0.06em;
+      }
 
-    .card-strip {
-      margin-top: 0.25rem;
-      display: flex;
-      gap: 0.6rem;
-      align-items: center;
-    }
+      .card-strip {
+        margin-top: 0.25rem;
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+      }
 
-    .poker-card {
-      width: 62px;
-      height: 88px;
-      border-radius: 14px;
-      background:
-        radial-gradient(circle at 15% 10%, rgba(255,255,255,0.24), transparent 55%),
-        radial-gradient(circle at 85% 90%, rgba(88,209,255,0.16), transparent 55%),
-        var(--card-bg);
-      border: 1px solid rgba(255,255,255,0.28);
-      box-shadow:
-        0 0 18px rgba(39,201,168,0.24),
-        0 10px 24px rgba(0,0,0,0.75);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
+      .poker-card {
+        width: 62px;
+        height: 88px;
+        border-radius: 14px;
+        background:
+          radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.24), transparent 55%),
+          radial-gradient(circle at 85% 90%, rgba(88, 209, 255, 0.16), transparent 55%),
+          var(--card-bg);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        box-shadow:
+          0 0 18px rgba(39, 201, 168, 0.24),
+          0 10px 24px rgba(0, 0, 0, 0.75);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
 
-    .poker-card::before {
-      content: '';
-      position: absolute;
-      inset: 1px;
-      border-radius: 13px;
-      border: 1px solid rgba(0,0,0,0.55);
-      pointer-events: none;
-    }
+      .poker-card::before {
+        content: "";
+        position: absolute;
+        inset: 1px;
+        border-radius: 13px;
+        border: 1px solid rgba(0, 0, 0, 0.55);
+        pointer-events: none;
+      }
 
-    .poker-rank {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      margin-bottom: 0.15rem;
-    }
+      .poker-rank {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        margin-bottom: 0.15rem;
+      }
 
-    .poker-suit {
-      font-size: 1.2rem;
-    }
+      .poker-suit {
+        font-size: 1.2rem;
+      }
 
-    .poker-suit.red {
-      color: #ff6b8b;
-    }
+      .poker-suit.red {
+        color: #ff6b8b;
+      }
 
-    .card-row-info {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
+      .card-row-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+      }
 
-    /* Auto deal UI */
-    .auto-deal {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
+      .auto-deal {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
 
-    .auto-toggle {
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(4,6,12,0.8);
-      color: var(--muted);
-      font-size: 0.75rem;
-      padding: 0.18rem 0.8rem;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.11em;
-      font-weight: 600;
-      transition: all 0.16s ease-out;
-    }
+      .auto-toggle {
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(4, 6, 12, 0.8);
+        color: var(--muted);
+        font-size: 0.78rem;
+        padding: 0.2rem 0.9rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        text-transform: uppercase;
+        letter-spacing: 0.11em;
+        font-weight: 600;
+        transition: all 0.16s ease-out;
+      }
 
-    .auto-toggle.active {
-      background: var(--accent-soft);
-      border-color: var(--accent);
-      color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(39,201,168,0.35);
-    }
+      .auto-toggle.active {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--accent-soft);
+      }
 
-    .auto-timer {
-      margin-top: 0.35rem;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
+      .auto-timer {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.76rem;
+        color: var(--muted);
+      }
 
-    .auto-timer-track {
-      flex: 1;
-      height: 4px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      overflow: hidden;
-    }
+      .auto-timer-track {
+        flex: 1;
+        min-width: 0;
+        height: 4px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+      }
 
-    .auto-timer-bar {
-      height: 100%;
-      width: 0;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), #58d1ff);
-      transform-origin: left center;
-    }
+      .auto-timer-bar {
+        height: 100%;
+        width: 0%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--accent), #58d1ff);
+        transition: width 0.2s linear;
+      }
 
-    .auto-timer-label {
-      white-space: nowrap;
-    }
-  </style>
-</head>
-<body>
-  <div class="app-shell">
-    <header>
-      <div class="brand">
-        <div class="logo">PM</div>
-        <div>
-          <div class="brand-title">Poker Training</div>
-          <div class="brand-name">Poker My Mind</div>
-          <div class="tagline">Judge your decisions, not your luck.</div>
-        </div>
-      </div>
-      <nav class="nav">
-        <button data-tab="preflop" class="active">Preflop Trainer</button>
-        <button data-tab="potodds">Pot Odds</button>
-        <button data-tab="about">About</button>
-      </nav>
-    </header>
-
-    <main>
-      <!-- Preflop Trainer -->
-      <section id="tab-preflop" class="card">
-        <div class="card-header">
+      .auto-timer-label {
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header>
+        <div class="brand">
+          <div class="logo">PM</div>
           <div>
-            <div class="card-title">Preflop Trainer</div>
-            <div class="card-subtitle">
-              Get dropped into a random spot, choose your move, and see if it was a good decision – before any flop.
-            </div>
+            <div class="brand-title">Poker Training</div>
+            <div class="brand-name">Poker My Mind</div>
+            <div class="tagline">Judge your decisions, not your luck.</div>
           </div>
-          <span class="pill">Random scenario · Unopened pot</span>
         </div>
+        <nav class="nav">
+          <button data-tab="preflop" class="active">Preflop Trainer</button>
+          <button data-tab="potodds">Pot Odds</button>
+          <button data-tab="about">About</button>
+        </nav>
+      </header>
 
-        <div class="form-grid">
-          <div>
-            <div class="field-group">
-              <label>Scenario</label>
-              <div class="scenario-row">
-                <div class="scenario-pill" id="scenarioPosition">POS: <strong>SB (Small Blind)</strong></div>
-                <div class="auto-deal">
-                  <span class="small-note">Auto deal if A</span>
-                  <button type="button" class="auto-toggle" id="autoDealToggle" aria-pressed="false">Off</button>
-                </div>
-              </div>
-              <div class="small-note">
-                Unopened cash-game pot. Blinds posted, action is on you preflop.
+      <main>
+        <!-- Preflop Trainer -->
+        <section id="tab-preflop" class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Preflop Trainer</div>
+              <div class="card-subtitle">
+                Get dropped into a random spot, choose your move, and see if it was a good decision – before any flop.
               </div>
             </div>
+            <span class="pill">Random scenario · Unopened pot</span>
+          </div>
 
-            <div class="field-group">
-              <label>Dealt cards</label>
-              <div class="card-strip">
-                <div class="poker-card" id="card1">
-                  <div class="poker-rank" id="card1Rank">8</div>
-                  <div class="poker-suit red" id="card1Suit">♦</div>
-                </div>
-                <div class="poker-card" id="card2">
-                  <div class="poker-rank" id="card2Rank">7</div>
-                  <div class="poker-suit" id="card2Suit">♣</div>
-                </div>
-                <div class="card-row-info">
-                  <div class="hand-preview" id="handPreview">
-                    <span>Hand</span>
-                    <strong>87o</strong>
+          <div class="preflop-layout">
+            <!-- 2. PREFLOP-SCENARIO-BAR -->
+            <div class="preflop-scenario-bar">
+              <div class="scenario-main">
+                <div class="scenario-row">
+                  <span class="scenario-label">Scenario</span>
+                  <div class="scenario-pill" id="scenarioPosition">
+                    POS: <strong>SB (Small Blind)</strong>
                   </div>
-                  <div class="small-note">Cards glow, you decide: fold, check, limp, or open-raise.</div>
+                </div>
+                <div class="scenario-note small-note">
+                  Unopened cash-game pot. Blinds posted, action is on you preflop.
+                </div>
+              </div>
+              <div class="scenario-controls">
+                <span class="small-note">Auto deal if A</span>
+                <button
+                  type="button"
+                  class="auto-toggle"
+                  id="autoDealToggle"
+                  aria-pressed="false"
+                >
+                  Off
+                </button>
+              </div>
+            </div>
+
+            <!-- 3 + 4. PREFLOP-DEALT-CARDS & PREFLOP-POSITION-INFO -->
+            <div class="preflop-top">
+              <div class="preflop-dealt-cards">
+                <div class="section-label">Dealt cards</div>
+                <div class="card-strip">
+                  <div class="poker-card" id="card1">
+                    <div class="poker-rank" id="card1Rank">A</div>
+                    <div class="poker-suit" id="card1Suit">♠</div>
+                  </div>
+                  <div class="poker-card" id="card2">
+                    <div class="poker-rank" id="card2Rank">J</div>
+                    <div class="poker-suit red" id="card2Suit">♥</div>
+                  </div>
+                  <div class="card-row-info">
+                    <div class="hand-preview" id="handPreview">
+                      <span>Hand</span>
+                      <strong>AJ</strong>
+                    </div>
+                    <div class="small-note">
+                      Cards glow, you decide: fold, check, limp, or open-raise.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="preflop-position-info">
+                <div class="section-label">Your position</div>
+                <div class="position-panel">
+                  <div class="position-map" aria-label="Table positions">
+                    <div class="position-seat" data-pos="UTG">UTG</div>
+                    <div class="position-seat" data-pos="MP">MP</div>
+                    <div class="position-seat" data-pos="CO">CO</div>
+                    <div class="position-seat" data-pos="BTN">BTN</div>
+                    <div class="position-seat" data-pos="SB">SB</div>
+                    <div class="position-seat" data-pos="BB">BB</div>
+                  </div>
+                  <p class="position-note small-note" id="positionNote">
+                    SB (Small Blind): you act first after the flop, so play tighter and prefer strong or playable hands.
+                  </p>
                 </div>
               </div>
             </div>
 
-            <div class="field-group">
-              <label>Your action</label>
+            <!-- 5. PREFLOP-ACTIONS -->
+            <div class="preflop-actions">
+              <div class="section-label">Your action</div>
               <div class="actions-row" id="actionButtons">
-                <button type="button" class="action-btn selected disabled" data-action="FOLD" aria-disabled="true">Fold</button>
-                <button type="button" class="action-btn disabled" data-action="CHECK" id="checkBtn" style="display:none;" aria-disabled="true">Check</button>
-                <button type="button" class="action-btn disabled" data-action="CALL" id="callBtn" title="Limping = calling the big blind preflop instead of raising." aria-disabled="true">
+                <button type="button" class="action-btn" data-action="FOLD">Fold</button>
+                <button
+                  type="button"
+                  class="action-btn"
+                  data-action="CHECK"
+                  id="checkBtn"
+                  style="display: none"
+                >
+                  Check
+                </button>
+                <button
+                  type="button"
+                  class="action-btn"
+                  data-action="CALL"
+                  id="callBtn"
+                  title="Limping = calling the big blind preflop instead of raising. In the BB with no raise, you check instead of calling."
+                >
                   Call / Limp
                 </button>
-                <button type="button" class="action-btn disabled" data-action="RAISE" aria-disabled="true">Raise / Open</button>
+                <button type="button" class="action-btn" data-action="RAISE">Raise / Open</button>
               </div>
             </div>
 
-            <button class="primary-btn" id="primaryBtn">Deal new hand<span>♠</span></button>
-            <div class="auto-timer" id="autoDealTimer" style="display:none;">
-              <div class="auto-timer-track">
-                <div class="auto-timer-bar" id="autoDealBar"></div>
-              </div>
-              <span class="auto-timer-label">Next hand in 2s…</span>
-            </div>
-          </div>
-
-          <div>
-            <div class="result" id="resultBox">
-              <div class="grade-pill">
-                <span class="grade-letter grade-badge-good" id="gradeLetter">A</span>
-                <span class="grade-context" id="gradeContext">Good discipline.</span>
-              </div>
-              <div class="recommendation" id="recommendation">Recommended: Folding is correct.</div>
-              <p class="explanation" id="explanation">87o misses the SB opening chart, so mucking keeps you out of trouble. Connected ranks give straight potential when you do see flops.</p>
-              <div class="meta" id="metaInfo">
-                <span>Spot: Unopened pot</span>
-                <span>Model: Simple cash-game open ranges</span>
-              </div>
-            </div>
-            <div class="stats-card" aria-label="Session status">
-              <div class="stats-row" id="statsRow">
-                <div class="stat-group">
-                  <span class="stat-chip" id="statTotal">Decisions: 4</span>
-                  <span class="stat-chip good" id="statGood">Good (A/B): 4</span>
-                  <span class="stat-chip leaky" id="statLeaky">Leaky (C–F): 0</span>
+            <!-- 6 + 7. PREFLOP-PRIMARY-BUTTON & AUTO-DEAL TIMER -->
+            <div class="preflop-primary">
+              <button class="primary-btn" id="primaryBtn">
+                Deal new hand<span>♠</span>
+              </button>
+              <div class="auto-timer" id="autoDealTimer" style="display: none">
+                <div class="auto-timer-track">
+                  <div class="auto-timer-bar" id="autoDealBar"></div>
                 </div>
-                <div class="report-card" aria-label="Overall report card">
-                  <span class="report-grade" id="reportGrade">A</span>
-                  <span class="report-text">
-                    Overall grade
-                    <span class="report-percent" id="reportPercent">100%</span>
-                  </span>
+                <span class="auto-timer-label">Next hand in 2s…</span>
+              </div>
+            </div>
+
+            <!-- 8 + 9. PREFLOP-FEEDBACK & PREFLOP-STATS -->
+            <div class="preflop-feedback">
+              <div class="result" id="resultBox">
+                <div class="grade-pill">
+                  <span class="grade-letter grade-badge-good" id="gradeLetter">A</span>
+                  <span class="grade-context" id="gradeContext">Good discipline.</span>
                 </div>
-                <button type="button" class="ghost-btn" id="resetStatsBtn">
-                  Reset stats
-                </button>
+                <div class="recommendation" id="recommendation">
+                  Recommended: Folding is correct.
+                </div>
+                <p class="explanation" id="explanation">
+                  Lock in an action for this hand to get a recommendation and grade.
+                </p>
+                <div class="meta" id="metaInfo">
+                  <span>Spot: Unopened pot</span>
+                  <span>Model: Simple cash-game open ranges</span>
+                </div>
+              </div>
+
+              <div class="stats-card" aria-label="Session status">
+                <div class="stats-row" id="statsRow">
+                  <div class="stat-group">
+                    <span class="stat-chip" id="statTotal">Decisions: 0</span>
+                    <span class="stat-chip good" id="statGood">Good (A/B): 0</span>
+                    <span class="stat-chip leaky" id="statLeaky">Leaky (C–F): 0</span>
+                  </div>
+                  <div class="report-card" aria-label="Overall report card">
+                    <span class="report-grade" id="reportGrade">A</span>
+                    <span class="report-text">
+                      Overall grade
+                      <span class="report-percent" id="reportPercent">100%</span>
+                    </span>
+                  </div>
+                  <button type="button" class="ghost-btn" id="resetStatsBtn">
+                    Reset stats
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <!-- Pot Odds -->
-      <section id="tab-potodds" class="card" style="display:none;">
-        <div class="card-header">
-          <div>
-            <div class="card-title">Pot Odds Helper</div>
-            <div class="card-subtitle">
-              Quick math to check if a call with a draw makes sense.
-            </div>
-          </div>
-          <span class="pill">Math · Single-street</span>
-        </div>
-
-        <div class="two-col">
-          <div class="form-grid">
-            <div class="field-group">
-              <label for="potSize">Pot size before villain bets</label>
-              <input type="number" id="potSize" min="0" step="0.01" placeholder="e.g. 10">
-            </div>
-            <div class="field-group">
-              <label for="betSize">Bet you’re facing</label>
-              <input type="number" id="betSize" min="0" step="0.01" placeholder="e.g. 5">
-            </div>
-            <div class="field-group">
-              <label for="outs">Your number of outs</label>
-              <input type="number" id="outs" min="0" max="20" step="1" placeholder="e.g. 9 for a flush draw">
-            </div>
-            <button class="primary-btn" id="calculateOddsBtn">
-              Calculate Pot Odds
-              <span>≈</span>
-            </button>
-          </div>
-          <div>
-            <div class="result" id="oddsResultBox">
-              <div class="grade-pill">
-                <span class="grade-letter" id="oddsSummary">–</span>
-                <span class="grade-context">Pot odds vs draw odds</span>
-              </div>
-              <div class="explanation" id="oddsExplanation">
-                Enter the pot size, bet size you’re facing, and your approximate outs.
-                You’ll see:
-                <ul style="margin: 0.4rem 0 0 1.1rem; padding: 0; font-size: 0.85rem;">
-                  <li>Pot odds (% you need to break even)</li>
-                  <li>Approximate equity from your outs</li>
-                  <li>Whether a call is roughly +EV or -EV</li>
-                </ul>
+        <!-- Pot Odds -->
+        <section id="tab-potodds" class="card" style="display: none">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Pot Odds Helper</div>
+              <div class="card-subtitle">
+                Quick math to check if a call with a draw makes sense.
               </div>
             </div>
+            <span class="pill">Math · Single-street</span>
           </div>
-        </div>
-        <p class="muted-note">
-          Note: This is a simple one-street estimate. Real hands require implied odds, reverse implied odds, and ranges,
-          but this keeps your baseline math honest.
-        </p>
-      </section>
 
-      <!-- About -->
-      <section id="tab-about" class="card" style="display:none;">
-        <div class="card-header">
-          <div>
-            <div class="card-title">About Poker My Mind</div>
-            <div class="card-subtitle">
-              A proof-of-concept trainer focused on decision quality over short-term results.
+          <div class="two-col">
+            <div class="form-grid">
+              <div class="field-group">
+                <label for="potSize">Pot size before villain bets</label>
+                <input
+                  type="number"
+                  id="potSize"
+                  min="0"
+                  step="0.01"
+                  placeholder="e.g. 10"
+                />
+              </div>
+              <div class="field-group">
+                <label for="betSize">Bet you’re facing</label>
+                <input
+                  type="number"
+                  id="betSize"
+                  min="0"
+                  step="0.01"
+                  placeholder="e.g. 5"
+                />
+              </div>
+              <div class="field-group">
+                <label for="outs">Your number of outs</label>
+                <input
+                  type="number"
+                  id="outs"
+                  min="0"
+                  max="20"
+                  step="1"
+                  placeholder="e.g. 9 for a flush draw"
+                />
+              </div>
+              <button class="primary-btn" id="calculateOddsBtn">
+                Calculate Pot Odds
+                <span>≈</span>
+              </button>
+            </div>
+            <div>
+              <div class="result" id="oddsResultBox">
+                <div class="grade-pill">
+                  <span class="grade-letter" id="oddsSummary">–</span>
+                  <span class="grade-context">Pot odds vs draw odds</span>
+                </div>
+                <div class="explanation" id="oddsExplanation">
+                  Enter the pot size, bet size you’re facing, and your approximate outs. You’ll see:
+                  <ul
+                    style="
+                      margin: 0.4rem 0 0 1.1rem;
+                      padding: 0;
+                      font-size: 0.85rem;
+                    "
+                  >
+                    <li>Pot odds (% you need to break even)</li>
+                    <li>Approximate equity from your outs</li>
+                    <li>Whether a call is roughly +EV or -EV</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
-          <span class="pill">Prototype · v0.5</span>
-        </div>
-        <div class="about-text">
-          <p>
-            <strong>Poker My Mind</strong> is built around one core idea:
-            judge your poker by the quality of your decisions, not by the luck of the runout.
+          <p class="muted-note">
+            Note: This is a simple one-street estimate. Real hands require implied odds, reverse implied odds, and
+            ranges, but this keeps your baseline math honest.
           </p>
-          <p>
-            This prototype deals you random preflop scenarios in unopened pots, lets you pick an action, and grades
-            your choice against simple open-raise ranges by position.
-          </p>
-          <p>
-            It includes:
-          </p>
-          <ul>
-            <li>Random hand + position generator</li>
-            <li>One evaluation per hand (no spammy retries)</li>
-            <li>Big blind-specific “Check vs limp” teaching</li>
-            <li>Auto Deal mode with a 2s cadence for fast reps</li>
-            <li>A basic pot odds helper for draw math</li>
-          </ul>
-          <p>
-            Future steps: facing opens &amp; 3-bets, postflop decisions, and full hand review with leak analysis.
-          </p>
-        </div>
-      </section>
-    </main>
+        </section>
 
-    <footer>
-      Poker My Mind · Prototype trainer – not a real-time assistance tool for any specific poker site or casino.
-      Always follow the rules of your cardroom.
-    </footer>
-  </div>
+        <!-- About -->
+        <section id="tab-about" class="card" style="display: none">
+          <div class="card-header">
+            <div>
+              <div class="card-title">About Poker My Mind</div>
+              <div class="card-subtitle">
+                A proof-of-concept trainer focused on decision quality over short-term results.
+              </div>
+            </div>
+            <span class="pill">Prototype · v0.5</span>
+          </div>
+          <div class="about-text">
+            <p>
+              <strong>Poker My Mind</strong> is built around one core idea: you should judge your poker by the quality
+              of your decisions, not by the luck of the runout.
+            </p>
+            <p>
+              This proof of concept deals you <strong>random preflop scenarios</strong> in unopened pots: you get a
+              position and a starting hand, you pick your move, and the app grades your decision against baseline
+              opening ranges.
+            </p>
+            <p>
+              In the big blind, you see a dedicated <strong>Check</strong> option and a disabled
+              <strong>Call/Limp</strong> button to reinforce the idea that you don’t call in an unopened pot – you
+              check.
+            </p>
+            <p>
+              Each scenario can only be <strong>evaluated once</strong>. After you lock in a decision and see the
+              grade, you must deal a new hand to get another rep. No spamming Evaluate to brute-force the right answer.
+            </p>
+            <p>
+              It also includes a simple <strong>pot odds helper</strong> for draw math. Future iterations can layer in:
+            </p>
+            <ul>
+              <li>Facing opens and 3-bets with range-based responses</li>
+              <li>Postflop c-betting and call/fold decisions with equity estimates</li>
+              <li>Full hand review with street-by-street grading and leak analysis</li>
+            </ul>
+          </div>
+        </section>
+      </main>
 
-  <script>
-    // ---------- Tabs ----------
-    const tabs = document.querySelectorAll('.nav button');
-    const sections = {
-      preflop: document.getElementById('tab-preflop'),
-      potodds: document.getElementById('tab-potodds'),
-      about: document.getElementById('tab-about'),
-    };
+      <footer>
+        Poker My Mind · Prototype trainer – not a real-time assistance tool for any specific poker site or casino.
+        Always follow the rules of your cardroom.
+      </footer>
+    </div>
 
-    tabs.forEach(btn => {
-      btn.addEventListener('click', () => {
-        tabs.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const tab = btn.dataset.tab;
-        Object.entries(sections).forEach(([key, el]) => {
-          el.style.display = key === tab ? 'block' : 'none';
+    <script>
+      // ---------- Tabs ----------
+      const tabs = document.querySelectorAll(".nav button");
+      const sections = {
+        preflop: document.getElementById("tab-preflop"),
+        potodds: document.getElementById("tab-potodds"),
+        about: document.getElementById("tab-about"),
+      };
+
+      tabs.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          tabs.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          const tab = btn.dataset.tab;
+          Object.entries(sections).forEach(([key, el]) => {
+            el.style.display = key === tab ? "block" : "none";
+          });
         });
       });
-    });
 
-    // ---------- Preflop logic ----------
-    const rankOrder = ['A','K','Q','J','T','9','8','7','6','5','4','3','2'];
-    const openRangesByPosition = {
-      UTG: [
-        'AA','KK','QQ','JJ','TT','99',
-        'AKs','AQs','AJs','KQs',
-        'AKo','AQo',
-      ],
-      MP: [
-        'AA','KK','QQ','JJ','TT','99','88','77',
-        'AKs','AQs','AJs','ATs','KQs','KJs','QJs',
-        'AKo','AQo','KQo',
-      ],
-      CO: [
-        'AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
-        'AKs','AQs','AJs','ATs','A9s','A8s',
-        'KQs','KJs','KTs',
-        'QJs','QTs','JTs','T9s','98s',
-        'AKo','AQo','AJo','KQo','KJo','QJo',
-      ],
-      BTN: [
-        'AA','KK','QQ','JJ','TT','99','88','77','66','55','44','33','22',
-        'AKs','AQs','AJs','ATs','A9s','A8s','A7s','A6s','A5s','A4s','A3s','A2s',
-        'KQs','KJs','KTs','K9s',
-        'QJs','QTs','Q9s',
-        'JTs','J9s',
-        'T9s','T8s',
-        '98s','97s','87s','76s','65s',
-        'AKo','AQo','AJo','ATo','A9o',
-        'KQo','KJo','KTo',
-        'QJo','QTo',
-        'JTo',
-      ],
-      SB: [
-        'AA','KK','QQ','JJ','TT','99','88','77','66','55',
-        'AKs','AQs','AJs','ATs','A9s','A8s',
-        'KQs','KJs','KTs',
-        'QJs','QTs','JTs','T9s','98s',
-        'AKo','AQo','AJo','KQo','KJo','QJo',
-      ],
-      BB: [
-        'AA','KK','QQ','JJ','TT','99','88','77',
-        'AKs','AQs','AJs','ATs','KQs','KJs',
-        'QJs','JTs','T9s',
-        'AKo','AQo','AJo','KQo',
-      ],
-    };
-
-    function canonicalHand(rank1, rank2, suitedFlag) {
-      if (rank1 === rank2) {
-        return rank1 + rank2; // pairs: AA, KK, etc.
-      }
-      const idx1 = rankOrder.indexOf(rank1);
-      const idx2 = rankOrder.indexOf(rank2);
-      const high = idx1 <= idx2 ? rank1 : rank2;
-      const low = idx1 <= idx2 ? rank2 : rank1;
-      return `${high}${low}${suitedFlag}`;
-    }
-
-    function analyzeHandTraits(hand) {
-      const suited = hand.endsWith('s');
-      const pair = hand.length === 2 || hand[0] === hand[1];
-      const ranks = pair ? [hand[0], hand[1]] : [hand[0], hand[1]];
-      const connectors = !pair && Math.abs(rankOrder.indexOf(ranks[0]) - rankOrder.indexOf(ranks[1])) === 1;
-      const broadwayRanks = ['A', 'K', 'Q', 'J', 'T'];
-      const broadway = ranks.every((r) => broadwayRanks.includes(r));
-      const blockers = ranks.filter((r) => ['A', 'K', 'Q'].includes(r));
-
-      return { suited, pair, connectors, broadway, blockers, ranks };
-    }
-
-    function buildPreflopExplanation({ hand, position, action, isInOpenRange }) {
-      const traits = analyzeHandTraits(hand);
-      const reasons = [];
-
-      if (action === 'CHECK' && position === 'BB') {
-        reasons.push(`Checking ${hand} takes the free flop and lets you realize equity without risk.`);
-      } else if (action === 'RAISE') {
-        if (isInOpenRange) {
-          reasons.push(`${hand} lives inside the recommended ${position} opening range.`);
-        } else {
-          reasons.push(`${hand} falls outside the preferred ${position} opens and drifts into marginal territory.`);
-        }
-      } else if (action === 'FOLD') {
-        if (isInOpenRange) {
-          reasons.push(`Folding forfeits a profitable open with ${hand} from ${position}.`);
-        } else {
-          reasons.push(`${hand} misses the ${position} opening chart, so mucking keeps you out of trouble.`);
-        }
-      } else if (action === 'CALL') {
-        reasons.push(`Calling preflop without a raise plan leaves ${hand} under-realized.`);
-      }
-
-      if (['BTN', 'CO'].includes(position) && action === 'RAISE') {
-        reasons.push('Late position leverage lets you pressure blinds and control postflop decisions.');
-      }
-
-      if (position === 'SB' && action === 'RAISE') {
-        reasons.push('Opening from the small blind compensates for playing the rest of the hand out of position.');
-      }
-
-      if (traits.pair) {
-        reasons.push('Pocket pairs retain showdown value and can flop sets against callers.');
-      } else {
-        if (traits.broadway) {
-          reasons.push('Broadway combinations make top pairs with strong kickers versus blind defenses.');
-        }
-        if (traits.connectors) {
-          reasons.push('Connected ranks give straight potential when you do see flops.');
-        }
-      }
-
-      if (traits.suited) {
-        reasons.push('Suitedness adds playability through flush backdoors and draws.');
-      }
-
-      if (action === 'RAISE' && traits.blockers.length) {
-        reasons.push(`High-card blockers (${traits.blockers.join('/')}) cut down premium combos that can 3-bet you.`);
-      }
-
-      if (action === 'RAISE' && ['BTN', 'CO'].includes(position)) {
-        reasons.push('Both blinds must defend wide and out of position, so opens print fold equity.');
-      }
-
-      if (action === 'CHECK' && position === 'BB') {
-        reasons.push('With no price to continue, you realize equity versus the entire field.');
-      }
-
-      return reasons.join(' ');
-    }
-
-    function evaluatePreflopOpen(position, hand, userAction) {
-      const allowed = openRangesByPosition[position] || [];
-      const isInOpenRange = allowed.includes(hand);
-
-      // Special handling for big blind check/fold/raise
-      if (position === 'BB') {
-        if (userAction === 'CHECK') {
-          if (isInOpenRange) {
-            return {
-              grade: 'B',
-              good: true,
-              context: 'Safe but passive.',
-              recommended: 'Raising prints more value.',
-              explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
-            };
-          } else {
-            return {
-              grade: 'A',
-              good: true,
-              context: 'Correct free check.',
-              recommended: 'Checking is ideal.',
-              explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
-            };
-          }
-        }
-        if (userAction === 'FOLD') {
-          return {
-            grade: 'D',
-            good: false,
-            context: 'Too tight.',
-            recommended: 'Check instead of folding.',
-            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
-          };
-        }
-        // Raises in BB fall through to the generic logic below
-      }
-
-      if (isInOpenRange) {
-        if (userAction === 'RAISE') {
-          return {
-            grade: 'A',
-            good: true,
-            context: 'Solid open.',
-            recommended: 'Raise / open this hand.',
-            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
-          };
-        }
-        if (userAction === 'FOLD') {
-          return {
-            grade: 'F',
-            good: false,
-            context: 'Too tight.',
-            recommended: 'Raise this hand instead of folding.',
-            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
-          };
-        }
-        if (userAction === 'CALL') {
-          return {
-            grade: 'C',
-            good: false,
-            context: 'Leaky limp.',
-            recommended: 'Raise, don\'t limp.',
-            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
-          };
-        }
-      } else {
-        if (userAction === 'RAISE') {
-          return {
-            grade: 'D',
-            good: false,
-            context: 'Too loose.',
-            recommended: 'Fold this hand preflop.',
-            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
-          };
-        }
-        if (userAction === 'CALL') {
-          return {
-            grade: 'D',
-            good: false,
-            context: 'Weak limp.',
-            recommended: 'Just fold this hand.',
-            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
-          };
-        }
-        if (userAction === 'FOLD') {
-          return {
-            grade: 'A',
-            good: true,
-            context: 'Good discipline.',
-            recommended: 'Folding is correct.',
-            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
-          };
-        }
-      }
-
-      return {
-        grade: 'B',
-        good: true,
-        context: 'Reasonable.',
-        recommended: 'Borderline, but not terrible.',
-        explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
+      // ---------- Preflop logic ----------
+      const rankOrder = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
+      const openRangesByPosition = {
+        UTG: ["AA", "KK", "QQ", "JJ", "TT", "99", "AKs", "AQs", "AJs", "KQs", "AKo", "AQo"],
+        MP: [
+          "AA",
+          "KK",
+          "QQ",
+          "JJ",
+          "TT",
+          "99",
+          "88",
+          "77",
+          "AKs",
+          "AQs",
+          "AJs",
+          "ATs",
+          "KQs",
+          "KJs",
+          "QJs",
+          "AKo",
+          "AQo",
+          "KQo",
+        ],
+        CO: [
+          "AA",
+          "KK",
+          "QQ",
+          "JJ",
+          "TT",
+          "99",
+          "88",
+          "77",
+          "66",
+          "55",
+          "44",
+          "33",
+          "22",
+          "AKs",
+          "AQs",
+          "AJs",
+          "ATs",
+          "A9s",
+          "A8s",
+          "KQs",
+          "KJs",
+          "KTs",
+          "QJs",
+          "QTs",
+          "JTs",
+          "T9s",
+          "98s",
+          "AKo",
+          "AQo",
+          "AJo",
+          "KQo",
+          "KJo",
+          "QJo",
+        ],
+        BTN: [
+          "AA",
+          "KK",
+          "QQ",
+          "JJ",
+          "TT",
+          "99",
+          "88",
+          "77",
+          "66",
+          "55",
+          "44",
+          "33",
+          "22",
+          "AKs",
+          "AQs",
+          "AJs",
+          "ATs",
+          "A9s",
+          "A8s",
+          "A7s",
+          "A6s",
+          "A5s",
+          "A4s",
+          "A3s",
+          "A2s",
+          "KQs",
+          "KJs",
+          "KTs",
+          "K9s",
+          "QJs",
+          "QTs",
+          "Q9s",
+          "JTs",
+          "J9s",
+          "T9s",
+          "T8s",
+          "98s",
+          "97s",
+          "87s",
+          "76s",
+          "65s",
+          "AKo",
+          "AQo",
+          "AJo",
+          "ATo",
+          "A9o",
+          "KQo",
+          "KJo",
+          "KTo",
+          "QJo",
+          "QTo",
+          "JTo",
+        ],
+        SB: [
+          "AA",
+          "KK",
+          "QQ",
+          "JJ",
+          "TT",
+          "99",
+          "88",
+          "77",
+          "66",
+          "55",
+          "AKs",
+          "AQs",
+          "AJs",
+          "ATs",
+          "A9s",
+          "A8s",
+          "KQs",
+          "KJs",
+          "KTs",
+          "QJs",
+          "QTs",
+          "JTs",
+          "T9s",
+          "98s",
+          "AKo",
+          "AQo",
+          "AJo",
+          "KQo",
+          "KJo",
+          "QJo",
+        ],
+        BB: [
+          "AA",
+          "KK",
+          "QQ",
+          "JJ",
+          "TT",
+          "99",
+          "88",
+          "77",
+          "AKs",
+          "AQs",
+          "AJs",
+          "ATs",
+          "KQs",
+          "KJs",
+          "QJs",
+          "JTs",
+          "T9s",
+          "AKo",
+          "AQo",
+          "AJo",
+          "KQo",
+        ],
       };
-    }
 
-    // Scenario dealing
-    const positions = ['UTG','MP','CO','BTN','SB','BB'];
-    const positionLabels = {
-      UTG: 'UTG (Early)',
-      MP: 'MP (Middle)',
-      CO: 'CO (Cutoff)',
-      BTN: 'BTN (Button)',
-      SB: 'SB (Small Blind)',
-      BB: 'BB (Big Blind)',
-    };
-
-    const ranks = ['A','K','Q','J','T','9','8','7','6','5','4','3','2'];
-    const suits = [
-      { symbol: '♠', color: 'black' },
-      { symbol: '♥', color: 'red' },
-      { symbol: '♦', color: 'red' },
-      { symbol: '♣', color: 'black' },
-    ];
-
-    const scenarioPositionEl = document.getElementById('scenarioPosition');
-    const handPreviewEl = document.getElementById('handPreview').querySelector('strong');
-    const card1RankEl = document.getElementById('card1Rank');
-    const card1SuitEl = document.getElementById('card1Suit');
-    const card2RankEl = document.getElementById('card2Rank');
-    const card2SuitEl = document.getElementById('card2Suit');
-
-    const actionButtonsEl = document.getElementById('actionButtons');
-    const callBtn = document.getElementById('callBtn');
-    const checkBtn = document.getElementById('checkBtn');
-    const primaryBtn = document.getElementById('primaryBtn');
-    const autoDealToggle = document.getElementById('autoDealToggle');
-    const autoDealTimerEl = document.getElementById('autoDealTimer');
-    const autoDealBarEl = document.getElementById('autoDealBar');
-
-    const gradeLetterEl = document.getElementById('gradeLetter');
-    const gradeContextEl = document.getElementById('gradeContext');
-    const recommendationEl = document.getElementById('recommendation');
-    const explanationEl = document.getElementById('explanation');
-
-    let currentPosition = 'BTN';
-    let currentCanonicalHand = 'AA';
-    let selectedAction = null;
-    let hasEvaluatedCurrent = false;
-    let autoDealEnabled = false;
-    let awaitingManualDeal = false;
-    let autoDealTimeoutId = null;
-    let lastEvalGrade = null;
-
-    function randomFrom(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    function updateActionsForPosition() {
-      if (!callBtn || !checkBtn) return;
-      const allActionBtns = actionButtonsEl.querySelectorAll('.action-btn');
-
-      const isBigBlind = currentPosition === 'BB';
-
-      if (isBigBlind) {
-        // Show Check, disable Call/Limp
-        checkBtn.style.display = 'flex';
-        callBtn.title = 'In the big blind with no raise, you don\'t call – checking is free.';
-      } else {
-        checkBtn.style.display = 'none';
-        callBtn.title = 'Limping = calling the big blind preflop instead of raising.';
-
-        // If we were on CHECK before and moved off BB, clear back to no selection
-        if (selectedAction === 'CHECK') {
-          selectedAction = null;
+      function canonicalHand(rank1, rank2, suitedFlag) {
+        if (rank1 === rank2) {
+          return rank1 + rank2;
         }
+        const idx1 = rankOrder.indexOf(rank1);
+        const idx2 = rankOrder.indexOf(rank2);
+        const high = idx1 <= idx2 ? rank1 : rank2;
+        const low = idx1 <= idx2 ? rank2 : rank1;
+        return `${high}${low}${suitedFlag}`;
       }
 
-      // Disable all buttons once a decision has been evaluated
-      // or disable Call/Limp specifically in the big blind.
-      allActionBtns.forEach(b => {
-        const isCallButton = b.dataset.action === 'CALL';
-        const shouldDisable = hasEvaluatedCurrent || (isBigBlind && isCallButton);
+      function evaluatePreflopOpen(position, hand, userAction) {
+        const allowed = openRangesByPosition[position] || [];
+        const isInOpenRange = allowed.includes(hand);
 
-        b.classList.toggle('disabled', shouldDisable);
-        if (shouldDisable) {
-          b.setAttribute('aria-disabled', 'true');
+        // Special handling for big blind check/fold/raise
+        if (position === "BB") {
+          if (userAction === "CHECK") {
+            if (isInOpenRange) {
+              return {
+                grade: "B",
+                good: true,
+                context: "Safe but passive.",
+                recommended: "Raising prints more value.",
+                explanation: `Checking ${hand} in the big blind is never terrible when you get a free flop, but raising strong hands here builds a pot when you are ahead.`,
+              };
+            } else {
+              return {
+                grade: "A",
+                good: true,
+                context: "Correct free check.",
+                recommended: "Checking is ideal.",
+                explanation: `With ${hand} in the big blind and no raise, checking to see a free flop is the highest-EV default. You realize your equity without risking chips preflop.`,
+              };
+            }
+          }
+          if (userAction === "FOLD") {
+            return {
+              grade: "D",
+              good: false,
+              context: "Too tight.",
+              recommended: "Check instead of folding.",
+              explanation: `Folding in the big blind when you can check for free throws away equity. Use the check option to see a flop instead of mucking.`,
+            };
+          }
+          // For raises in BB, fall through to regular open-range logic below
+        }
+
+        if (isInOpenRange) {
+          if (userAction === "RAISE") {
+            return {
+              grade: "A",
+              good: true,
+              context: "Solid open.",
+              recommended: "Raise / open this hand.",
+              explanation: `${hand} is in your recommended open range from ${position}. Opening here applies pressure and prints value long term.`,
+            };
+          }
+          if (userAction === "FOLD") {
+            return {
+              grade: "F",
+              good: false,
+              context: "Too tight.",
+              recommended: "Raise this hand instead of folding.",
+              explanation: `Folding ${hand} from ${position} is leaving money on the table. This hand should be opened in most lineups.`,
+            };
+          }
+          if (userAction === "CALL") {
+            return {
+              grade: "C",
+              good: false,
+              context: "Leaky limp.",
+              recommended: "Raise, don't limp.",
+              explanation: `Limping ${hand} from ${position} is usually dominated and hard to play. Raising is higher EV and keeps your range aggressive.`,
+            };
+          }
         } else {
-          b.removeAttribute('aria-disabled');
-        }
-
-        b.classList.toggle('selected', b.dataset.action === selectedAction);
-      });
-    }
-
-    function clearAutoDealTimer() {
-      if (autoDealTimeoutId !== null) {
-        clearTimeout(autoDealTimeoutId);
-        autoDealTimeoutId = null;
-      }
-      if (autoDealTimerEl) {
-        autoDealTimerEl.style.display = 'none';
-      }
-    }
-
-    function setPrimaryBtnToEvaluate() {
-      primaryBtn.innerHTML = 'Evaluate Decision<span>→</span>';
-    }
-
-    function setPrimaryBtnToDeal() {
-      primaryBtn.innerHTML = 'Deal new hand<span>♠</span>';
-    }
-
-    function resetResultBox() {
-      gradeLetterEl.textContent = '–';
-      gradeLetterEl.classList.remove('grade-badge-good', 'grade-badge-bad');
-      gradeContextEl.textContent = 'Awaiting decision.';
-      recommendationEl.textContent = 'Pick an action and evaluate to see feedback.';
-      explanationEl.textContent = 'Lock in an action for this hand to get a recommendation and grade.';
-    }
-
-    function resetEvaluateState() {
-      hasEvaluatedCurrent = false;
-      awaitingManualDeal = false;
-      lastEvalGrade = null;
-      clearAutoDealTimer();
-      setPrimaryBtnToEvaluate();
-      primaryBtn.classList.remove('disabled');
-      primaryBtn.removeAttribute('aria-disabled');
-      primaryBtn.disabled = false;
-    }
-
-    function dealScenario() {
-      // Random position
-      currentPosition = randomFrom(positions);
-      const label = positionLabels[currentPosition] || currentPosition;
-      scenarioPositionEl.innerHTML = `POS: <strong>${label}</strong>`;
-
-      // Random distinct cards
-      const r1 = randomFrom(ranks);
-      const s1 = randomFrom(suits);
-      let r2 = randomFrom(ranks);
-      let s2 = randomFrom(suits);
-      // Ensure not identical card
-      while (r2 === r1 && s2.symbol === s1.symbol) {
-        r2 = randomFrom(ranks);
-        s2 = randomFrom(suits);
-      }
-
-      const suitedFlag = r1 === r2 ? '' : (s1.symbol === s2.symbol ? 's' : 'o');
-      currentCanonicalHand = canonicalHand(r1, r2, suitedFlag || (s1.symbol === s2.symbol ? 's' : 'o'));
-
-      // Update visual cards
-      card1RankEl.textContent = r1;
-      card1SuitEl.textContent = s1.symbol;
-      card1SuitEl.classList.toggle('red', s1.color === 'red');
-
-      card2RankEl.textContent = r2;
-      card2SuitEl.textContent = s2.symbol;
-      card2SuitEl.classList.toggle('red', s2.color === 'red');
-
-      handPreviewEl.textContent = currentCanonicalHand;
-
-      // Clear selected action on new deal
-      selectedAction = null;
-      actionButtonsEl.querySelectorAll('.action-btn').forEach(b => b.classList.remove('selected'));
-      resetResultBox();
-      resetEvaluateState();
-      updateActionsForPosition();
-    }
-
-    actionButtonsEl.addEventListener('click', (e) => {
-      const btn = e.target.closest('.action-btn');
-      if (!btn) return;
-      if (btn.classList.contains('disabled') || btn.getAttribute('aria-disabled') === 'true') {
-        // Ignore clicks on disabled buttons (e.g., Call/Limp in BB)
-        return;
-      }
-      selectedAction = btn.dataset.action;
-      actionButtonsEl.querySelectorAll('.action-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-    });
-
-    // Stats in localStorage
-    const statsKey = 'pokerMyMind_preflopStats';
-    function loadStats() {
-      try {
-        const raw = localStorage.getItem(statsKey);
-        if (!raw) return { total: 0, good: 0, leaky: 0 };
-        return JSON.parse(raw);
-      } catch {
-        return { total: 0, good: 0, leaky: 0 };
-      }
-    }
-    function saveStats(stats) {
-      try {
-        localStorage.setItem(statsKey, JSON.stringify(stats));
-      } catch (e) {
-        // ignore
-      }
-    }
-    function calculateReportCard(stats) {
-      if (!stats.total) {
-        return { letter: '–', percent: '0%' };
-      }
-      const percent = Math.round((stats.good / stats.total) * 100);
-      let letter = 'F';
-      if (percent >= 90) {
-        letter = 'A';
-      } else if (percent >= 80) {
-        letter = 'B';
-      } else if (percent >= 70) {
-        letter = 'C';
-      } else if (percent >= 60) {
-        letter = 'D';
-      }
-      return { letter, percent: `${percent}%` };
-    }
-    function updateStatsUI() {
-      const stats = loadStats();
-      document.getElementById('statTotal').textContent = `Decisions: ${stats.total}`;
-      document.getElementById('statGood').textContent = `Good (A/B): ${stats.good}`;
-      document.getElementById('statLeaky').textContent = `Leaky (C–F): ${stats.leaky}`;
-      const report = calculateReportCard(stats);
-      document.getElementById('reportGrade').textContent = report.letter;
-      document.getElementById('reportPercent').textContent = report.percent;
-    }
-    updateStatsUI();
-
-    document.getElementById('resetStatsBtn').addEventListener('click', () => {
-      localStorage.removeItem(statsKey);
-      updateStatsUI();
-    });
-
-    // Auto deal toggle
-    if (autoDealToggle) {
-      autoDealToggle.addEventListener('click', () => {
-        autoDealEnabled = !autoDealEnabled;
-        autoDealToggle.setAttribute('aria-pressed', autoDealEnabled ? 'true' : 'false');
-        autoDealToggle.classList.toggle('active', autoDealEnabled);
-        autoDealToggle.textContent = autoDealEnabled ? 'On' : 'Off';
-
-        if (!autoDealEnabled) {
-          clearAutoDealTimer();
-          // If we had just graded under auto mode, switch to manual "Deal new hand" mode
-          if (hasEvaluatedCurrent && !awaitingManualDeal) {
-            awaitingManualDeal = true;
-            primaryBtn.classList.remove('disabled');
-            primaryBtn.removeAttribute('aria-disabled');
-            primaryBtn.disabled = false;
-            setPrimaryBtnToDeal();
+          if (userAction === "RAISE") {
+            return {
+              grade: "D",
+              good: false,
+              context: "Too loose.",
+              recommended: "Fold this hand preflop.",
+              explanation: `${hand} is outside the recommended open range from ${position}. Opening hands like this loses money over time.`,
+            };
           }
-        } else if (hasEvaluatedCurrent) {
-          // If we toggle on auto-deal after grading in manual mode, start the auto cadence only after A grades
-          awaitingManualDeal = false;
-          if (lastEvalGrade === 'A') {
-            primaryBtn.classList.add('disabled');
-            primaryBtn.setAttribute('aria-disabled', 'true');
-            primaryBtn.disabled = true;
-            startAutoDealCountdown();
-          } else {
-            clearAutoDealTimer();
-            awaitingManualDeal = true;
-            primaryBtn.classList.remove('disabled');
-            primaryBtn.removeAttribute('aria-disabled');
-            primaryBtn.disabled = false;
-            setPrimaryBtnToDeal();
+          if (userAction === "CALL") {
+            return {
+              grade: "D",
+              good: false,
+              context: "Weak limp.",
+              recommended: "Just fold this hand.",
+              explanation: `Calling or limping ${hand} here is rarely profitable. In an unopened pot, you want to raise strong hands and fold the rest.`,
+            };
+          }
+          if (userAction === "FOLD") {
+            return {
+              grade: "A",
+              good: true,
+              context: "Good discipline.",
+              recommended: "Folding is correct.",
+              explanation: `${hand} is not in your profitable open range from ${position}. Folding keeps your range tight and avoids marginal spots.`,
+            };
           }
         }
-      });
-    }
 
-    function startAutoDealCountdown() {
-      if (lastEvalGrade !== 'A') {
-        return;
+        return {
+          grade: "B",
+          good: true,
+          context: "Reasonable.",
+          recommended: "Borderline, but not terrible.",
+          explanation: `This is a borderline spot for ${hand} from ${position}. Against tighter fields, folding is fine; against weak players, opening may be okay.`,
+        };
       }
-      clearAutoDealTimer();
-      if (!autoDealTimerEl || !autoDealBarEl) {
-        autoDealTimeoutId = setTimeout(() => {
-          dealScenario();
-        }, 2000);
-        return;
+
+      // Scenario dealing
+      const positions = ["UTG", "MP", "CO", "BTN", "SB", "BB"];
+      const positionLabels = {
+        UTG: "UTG (Early)",
+        MP: "MP (Middle)",
+        CO: "CO (Cutoff)",
+        BTN: "BTN (Button)",
+        SB: "SB (Small Blind)",
+        BB: "BB (Big Blind)",
+      };
+
+      const positionDescriptions = {
+        UTG: "Early position: many players left to act. Play your tightest range here.",
+        MP: "Middle position: a bit safer than UTG, but still tighten up compared to late seats.",
+        CO: "Cutoff: late position with only the button behind. You can open wider and steal more.",
+        BTN: "Button: best seat at the table. You act last postflop, so you can play the widest range.",
+        SB: "Small blind: you are out of position postflop and already invested. Open tighter and avoid junk.",
+        BB: "Big blind: you close the action preflop and often get to defend with good odds.",
+      };
+
+      const ranks = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
+      const suits = [
+        { symbol: "♠", color: "black" },
+        { symbol: "♥", color: "red" },
+        { symbol: "♦", color: "red" },
+        { symbol: "♣", color: "black" },
+      ];
+
+      const scenarioPositionEl = document.getElementById("scenarioPosition");
+      const positionNoteEl = document.getElementById("positionNote");
+      const positionSeats = document.querySelectorAll(".position-seat");
+
+      const handPreviewEl = document.getElementById("handPreview").querySelector("strong");
+      const card1RankEl = document.getElementById("card1Rank");
+      const card1SuitEl = document.getElementById("card1Suit");
+      const card2RankEl = document.getElementById("card2Rank");
+      const card2SuitEl = document.getElementById("card2Suit");
+
+      const actionButtonsEl = document.getElementById("actionButtons");
+      const callBtn = document.getElementById("callBtn");
+      const checkBtn = document.getElementById("checkBtn");
+      const primaryBtn = document.getElementById("primaryBtn");
+      const autoDealToggle = document.getElementById("autoDealToggle");
+      const autoDealTimerEl = document.getElementById("autoDealTimer");
+      const autoDealBarEl = document.getElementById("autoDealBar");
+
+      const gradeLetterEl = document.getElementById("gradeLetter");
+      const gradeContextEl = document.getElementById("gradeContext");
+      const recommendationEl = document.getElementById("recommendation");
+      const explanationEl = document.getElementById("explanation");
+
+      let currentPosition = "BTN";
+      let currentCanonicalHand = "AA";
+      let selectedAction = null;
+      let hasEvaluatedCurrent = false;
+      let autoDealEnabled = false;
+      let awaitingManualDeal = false;
+      let autoDealTimeoutId = null;
+      let lastEvalGrade = null;
+
+      function randomFrom(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
       }
-      autoDealTimerEl.style.display = 'flex';
-      autoDealBarEl.style.width = '0%';
 
-      const start = performance.now();
-      const duration = 2000;
+      function updatePositionDisplay() {
+        if (!positionNoteEl || !positionSeats) return;
+        const label = positionLabels[currentPosition] || currentPosition;
+        scenarioPositionEl.innerHTML = `POS: <strong>${label}</strong>`;
 
-      function step(now) {
-        const elapsed = now - start;
-        const progress = Math.min(elapsed / duration, 1);
-        autoDealBarEl.style.width = (progress * 100) + '%';
+        // Highlight active seat
+        positionSeats.forEach((seat) => {
+          const seatPos = seat.getAttribute("data-pos");
+          seat.classList.toggle("active", seatPos === currentPosition);
+        });
 
-        if (progress < 1 && autoDealEnabled && hasEvaluatedCurrent) {
-          requestAnimationFrame(step);
-        } else if (progress >= 1 && hasEvaluatedCurrent && autoDealEnabled) {
-          dealScenario();
-          clearAutoDealTimer();
+        // Update short description
+        const desc = positionDescriptions[currentPosition];
+        if (desc) {
+          positionNoteEl.textContent = desc;
         }
       }
 
-      requestAnimationFrame(step);
-    }
+      function updateActionsForPosition() {
+        if (!callBtn || !checkBtn) return;
+        const allActionBtns = actionButtonsEl.querySelectorAll(".action-btn");
 
-    primaryBtn.addEventListener('click', () => {
-      // If we're in manual mode and waiting to deal the next hand,
-      // this button acts as "Deal new hand"
-      if (awaitingManualDeal && (!autoDealEnabled || lastEvalGrade !== 'A')) {
-        dealScenario();
-        return;
+        if (currentPosition === "BB") {
+          // Show Check, disable Call/Limp
+          checkBtn.style.display = "flex";
+          callBtn.classList.add("disabled");
+          callBtn.setAttribute("aria-disabled", "true");
+          callBtn.title = "In the big blind with no raise, you don't call – checking is free.";
+        } else {
+          checkBtn.style.display = "none";
+          callBtn.classList.remove("disabled");
+          callBtn.removeAttribute("aria-disabled");
+          callBtn.title = "Limping = calling the big blind preflop instead of raising.";
+
+          // If we were on CHECK before and moved off BB, clear selection
+          if (selectedAction === "CHECK") {
+            selectedAction = null;
+          }
+        }
+
+        // Ensure selected visual state matches selectedAction
+        allActionBtns.forEach((b) => {
+          b.classList.toggle("selected", b.dataset.action === selectedAction);
+        });
       }
 
-      if (hasEvaluatedCurrent) {
-        // Already graded this spot; ignore until a new hand is dealt
-        return;
+      function clearAutoDealTimer() {
+        if (autoDealTimeoutId !== null) {
+          clearTimeout(autoDealTimeoutId);
+          autoDealTimeoutId = null;
+        }
+        if (autoDealTimerEl) {
+          autoDealTimerEl.style.display = "none";
+        }
       }
 
-      if (!selectedAction) {
-        // Require the user to actually pick an action before grading
-        gradeLetterEl.textContent = '–';
-        gradeLetterEl.classList.remove('grade-badge-good', 'grade-badge-bad');
-        gradeContextEl.textContent = 'Pick an action first.';
-        recommendationEl.textContent = 'Choose Fold, Check, Call/Limp, or Raise.';
-        explanationEl.textContent = 'The trainer only grades a decision after you lock in an action for this hand.';
-        return;
+      function setPrimaryBtnToEvaluate() {
+        primaryBtn.innerHTML = "Evaluate Decision<span>→</span>";
       }
 
-      const position = currentPosition;
-      const hand = currentCanonicalHand;
-      const evalResult = evaluatePreflopOpen(position, hand, selectedAction);
-
-      lastEvalGrade = evalResult.grade;
-
-      gradeLetterEl.textContent = evalResult.grade;
-      gradeLetterEl.classList.toggle('grade-badge-good', evalResult.good);
-      gradeLetterEl.classList.toggle('grade-badge-bad', !evalResult.good);
-      gradeContextEl.textContent = evalResult.context;
-      recommendationEl.textContent = `Recommended: ${evalResult.recommended}`;
-      explanationEl.textContent = evalResult.explanation;
-
-      const stats = loadStats();
-      stats.total += 1;
-      if (evalResult.good && (evalResult.grade === 'A' || evalResult.grade === 'B')) {
-        stats.good += 1;
-      } else {
-        stats.leaky += 1;
+      function setPrimaryBtnToDeal() {
+        primaryBtn.innerHTML = "Deal new hand<span>♠</span>";
       }
-      saveStats(stats);
-      updateStatsUI();
 
-      // Lock this scenario – only one graded decision per hand
-      hasEvaluatedCurrent = true;
-      updateActionsForPosition();
+      function resetResultBox() {
+        gradeLetterEl.textContent = "–";
+        gradeLetterEl.classList.remove("grade-badge-good", "grade-badge-bad");
+        gradeContextEl.textContent = "Awaiting decision.";
+        recommendationEl.textContent = "Pick an action and evaluate to see feedback.";
+        explanationEl.textContent = "Lock in an action for this hand to get a recommendation and grade.";
+      }
 
-      if (autoDealEnabled && evalResult.grade === 'A') {
-        // Auto mode: lock button, show timer, auto-deal after 2s when user nails an A
-        primaryBtn.classList.add('disabled');
-        primaryBtn.setAttribute('aria-disabled', 'true');
-        primaryBtn.disabled = true;
-        startAutoDealCountdown();
-      } else {
-        // Manual mode or auto paused on non-A grades: turn this button into "Deal new hand"
+      function resetEvaluateState() {
+        hasEvaluatedCurrent = false;
+        awaitingManualDeal = false;
+        lastEvalGrade = null;
         clearAutoDealTimer();
-        awaitingManualDeal = true;
-        primaryBtn.classList.remove('disabled');
-        primaryBtn.removeAttribute('aria-disabled');
+        setPrimaryBtnToEvaluate();
+        primaryBtn.classList.remove("disabled");
+        primaryBtn.removeAttribute("aria-disabled");
         primaryBtn.disabled = false;
-        setPrimaryBtnToDeal();
-      }
-    });
-
-    // ---------- Pot odds helper ----------
-    function approximateEquityFromOuts(outs) {
-      // Rough rule-of-thumb with one card to come
-      return outs * 2.2;
-    }
-
-    document.getElementById('calculateOddsBtn').addEventListener('click', () => {
-      const potSize = parseFloat(document.getElementById('potSize').value || '0');
-      const betSize = parseFloat(document.getElementById('betSize').value || '0');
-      const outs = parseInt(document.getElementById('outs').value || '0', 10);
-
-      const summaryEl = document.getElementById('oddsSummary');
-      const explanationEl2 = document.getElementById('oddsExplanation');
-
-      if (betSize <= 0 || potSize < 0 || outs < 0) {
-        summaryEl.textContent = '–';
-        explanationEl2.textContent = 'Please enter a valid pot, bet, and outs to calculate pot odds.';
-        return;
       }
 
-      const potAfterCall = potSize + betSize;
-      const potOddsNeeded = (betSize / potAfterCall) * 100;
-      const approxEquity = approximateEquityFromOuts(outs);
+      function dealScenario() {
+        // Random position
+        currentPosition = randomFrom(positions);
+        updatePositionDisplay();
 
-      const roundedPotOdds = Math.round(potOddsNeeded * 10) / 10;
-      const roundedEquity = Math.round(approxEquity * 10) / 10;
+        // Random distinct cards
+        const r1 = randomFrom(ranks);
+        const s1 = randomFrom(suits);
+        let r2 = randomFrom(ranks);
+        let s2 = randomFrom(suits);
+        // Ensure not identical card
+        while (r2 === r1 && s2.symbol === s1.symbol) {
+          r2 = randomFrom(ranks);
+          s2 = randomFrom(suits);
+        }
 
-      let verdict;
-      if (approxEquity >= potOddsNeeded + 2) {
-        verdict = 'Call looks +EV (ignoring implied/reverse implied odds).';
-        summaryEl.textContent = 'Call';
-      } else if (approxEquity <= potOddsNeeded - 2) {
-        verdict = 'Call looks -EV; you are not winning often enough for this price.';
-        summaryEl.textContent = 'Fold';
-      } else {
-        verdict = 'Very close spot; other factors (ranges, position, future streets) should decide.';
-        summaryEl.textContent = 'Borderline';
+        const suitedFlag = r1 === r2 ? "" : s1.symbol === s2.symbol ? "s" : "o";
+        currentCanonicalHand = canonicalHand(r1, r2, suitedFlag || (s1.symbol === s2.symbol ? "s" : "o"));
+
+        // Update visual cards
+        card1RankEl.textContent = r1;
+        card1SuitEl.textContent = s1.symbol;
+        card1SuitEl.classList.toggle("red", s1.color === "red");
+
+        card2RankEl.textContent = r2;
+        card2SuitEl.textContent = s2.symbol;
+        card2SuitEl.classList.toggle("red", s2.color === "red");
+
+        handPreviewEl.textContent = currentCanonicalHand;
+
+        // Clear selected action on new deal
+        selectedAction = null;
+        actionButtonsEl.querySelectorAll(".action-btn").forEach((b) => b.classList.remove("selected"));
+        resetResultBox();
+        resetEvaluateState();
+        updateActionsForPosition();
       }
 
-      explanationEl2.innerHTML =
-        `Pot odds required: <strong>${roundedPotOdds.toFixed(1)}%</strong><br>` +
-        `Approximate equity from outs: <strong>${roundedEquity.toFixed(1)}%</strong><br><br>` +
-        verdict;
-    });
+      actionButtonsEl.addEventListener("click", (e) => {
+        const btn = e.target.closest(".action-btn");
+        if (!btn) return;
+        if (btn.classList.contains("disabled") || btn.getAttribute("aria-disabled") === "true") {
+          // Ignore clicks on disabled buttons (e.g., Call/Limp in BB)
+          return;
+        }
+        selectedAction = btn.dataset.action;
+        actionButtonsEl.querySelectorAll(".action-btn").forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+      });
 
-    // Deal an initial scenario on load
-    dealScenario();
-  </script>
+      // Stats in localStorage
+      const statsKey = "pokerMyMind_preflopStats";
+      function loadStats() {
+        try {
+          const raw = localStorage.getItem(statsKey);
+          if (!raw) return { total: 0, good: 0, leaky: 0 };
+          return JSON.parse(raw);
+        } catch {
+          return { total: 0, good: 0, leaky: 0 };
+        }
+      }
+      function saveStats(stats) {
+        try {
+          localStorage.setItem(statsKey, JSON.stringify(stats));
+        } catch (e) {
+          // ignore
+        }
+      }
+      function updateStatsUI() {
+        const stats = loadStats();
+        document.getElementById("statTotal").textContent = `Decisions: ${stats.total}`;
+        document.getElementById("statGood").textContent = `Good (A/B): ${stats.good}`;
+        document.getElementById("statLeaky").textContent = `Leaky (C–F): ${stats.leaky}`;
 
+        const reportGradeEl = document.getElementById("reportGrade");
+        const reportPercentEl = document.getElementById("reportPercent");
+        if (!reportGradeEl || !reportPercentEl || stats.total === 0) {
+          reportGradeEl.textContent = "–";
+          reportPercentEl.textContent = "0%";
+          return;
+        }
+        const goodRate = stats.good / stats.total;
+        let grade = "D";
+        if (goodRate >= 0.9) grade = "A";
+        else if (goodRate >= 0.75) grade = "B";
+        else if (goodRate >= 0.6) grade = "C";
+        else grade = "D";
+        reportGradeEl.textContent = grade;
+        reportPercentEl.textContent = `${Math.round(goodRate * 100)}%`;
+      }
+      updateStatsUI();
 
-</body></html>
+      document.getElementById("resetStatsBtn").addEventListener("click", () => {
+        localStorage.removeItem(statsKey);
+        updateStatsUI();
+        resetResultBox();
+      });
+
+      if (autoDealToggle) {
+        autoDealToggle.addEventListener("click", () => {
+          autoDealEnabled = !autoDealEnabled;
+          autoDealToggle.setAttribute("aria-pressed", autoDealEnabled ? "true" : "false");
+          autoDealToggle.classList.toggle("active", autoDealEnabled);
+          autoDealToggle.textContent = autoDealEnabled ? "On" : "Off";
+          if (!autoDealEnabled) {
+            clearAutoDealTimer();
+            if (hasEvaluatedCurrent && !awaitingManualDeal) {
+              awaitingManualDeal = true;
+              primaryBtn.classList.remove("disabled");
+              primaryBtn.removeAttribute("aria-disabled");
+              primaryBtn.disabled = false;
+              setPrimaryBtnToDeal();
+            }
+          }
+        });
+      }
+
+      function startAutoDealCountdown() {
+        if (lastEvalGrade !== "A" || !autoDealEnabled) {
+          return;
+        }
+
+        clearAutoDealTimer();
+        if (!autoDealTimerEl || !autoDealBarEl) {
+          autoDealTimeoutId = setTimeout(() => {
+            dealScenario();
+          }, 2000);
+          return;
+        }
+        autoDealTimerEl.style.display = "flex";
+        autoDealBarEl.style.width = "0%";
+        const start = performance.now();
+        const duration = 2000;
+
+        function step(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          autoDealBarEl.style.width = progress * 100 + "%";
+          if (progress < 1 && autoDealEnabled && hasEvaluatedCurrent && lastEvalGrade === "A") {
+            requestAnimationFrame(step);
+          } else if (progress >= 1 && hasEvaluatedCurrent && autoDealEnabled && lastEvalGrade === "A") {
+            dealScenario();
+            clearAutoDealTimer();
+          }
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      primaryBtn.addEventListener("click", () => {
+        if (awaitingManualDeal && !autoDealEnabled) {
+          // In manual mode after a graded decision, this button deals the next hand
+          dealScenario();
+          return;
+        }
+
+        if (hasEvaluatedCurrent) {
+          // Already graded this spot; ignore until a new hand is dealt
+          return;
+        }
+
+        if (!selectedAction) {
+          // Require the user to actually pick an action before grading
+          gradeLetterEl.textContent = "–";
+          gradeLetterEl.classList.remove("grade-badge-good", "grade-badge-bad");
+          gradeContextEl.textContent = "Pick an action first.";
+          recommendationEl.textContent = "Choose Fold, Check, Call/Limp, or Raise before evaluating.";
+          explanationEl.textContent =
+            "Poker is about decisions. Lock in what you would actually do at the table, then hit Evaluate.";
+          return;
+        }
+
+        const evalResult = evaluatePreflopOpen(currentPosition, currentCanonicalHand, selectedAction);
+        gradeLetterEl.textContent = evalResult.grade;
+        gradeLetterEl.classList.toggle("grade-badge-good", evalResult.good);
+        gradeLetterEl.classList.toggle("grade-badge-bad", !evalResult.good);
+        gradeContextEl.textContent = evalResult.context;
+        recommendationEl.textContent = `Recommended: ${evalResult.recommended}`;
+        explanationEl.textContent = evalResult.explanation;
+
+        hasEvaluatedCurrent = true;
+        lastEvalGrade = evalResult.grade;
+
+        // Update stats
+        const stats = loadStats();
+        stats.total += 1;
+        if (evalResult.grade === "A" || evalResult.grade === "B") {
+          stats.good += 1;
+        } else {
+          stats.leaky += 1;
+        }
+        saveStats(stats);
+        updateStatsUI();
+
+        if (autoDealEnabled && evalResult.grade === "A") {
+          // Lock the button and auto-deal on A grades
+          primaryBtn.classList.add("disabled");
+          primaryBtn.setAttribute("aria-disabled", "true");
+          primaryBtn.disabled = true;
+          setPrimaryBtnToEvaluate();
+          startAutoDealCountdown();
+        } else {
+          // Manual mode: convert primary button into "Deal new hand"
+          awaitingManualDeal = true;
+          setPrimaryBtnToDeal();
+        }
+      });
+
+      // ---------- Pot odds helper ----------
+      function approximateEquityFromOuts(outs) {
+        // Rough rule-of-thumb with one card to come
+        return outs * 2.2;
+      }
+
+      document.getElementById("calculateOddsBtn").addEventListener("click", () => {
+        const potSize = parseFloat(document.getElementById("potSize").value || "0");
+        const betSize = parseFloat(document.getElementById("betSize").value || "0");
+        const outs = parseInt(document.getElementById("outs").value || "0", 10);
+
+        const summaryEl = document.getElementById("oddsSummary");
+        const explanationElOdds = document.getElementById("oddsExplanation");
+
+        if (betSize <= 0 || potSize < 0 || outs < 0) {
+          summaryEl.textContent = "–";
+          explanationElOdds.textContent =
+            "Enter a pot size, a bet you are facing, and a non-negative number of outs to see the math.";
+          return;
+        }
+
+        const totalPotIfCall = potSize + betSize + betSize;
+        const potOdds = betSize / totalPotIfCall; // break-even frequency
+        const equityNeededPct = potOdds * 100;
+        const equityFromOutsPct = approximateEquityFromOuts(outs);
+
+        const isProfitable = equityFromOutsPct >= equityNeededPct;
+        const verdict = isProfitable ? "Calling is roughly +EV." : "Calling is roughly -EV, folding is safer.";
+
+        summaryEl.textContent = isProfitable ? "Call OK" : "Fold";
+        explanationElOdds.innerHTML =
+          `Pot odds require about ${equityNeededPct.toFixed(1)}% equity. ` +
+          `Your draw with ${outs} outs is worth roughly ${equityFromOutsPct.toFixed(1)}% equity.<br><br>` +
+          verdict;
+      });
+
+      // Deal an initial scenario on load
+      dealScenario();
+    </script>
+  </body>
+</html>
