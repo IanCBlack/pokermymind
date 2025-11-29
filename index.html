@@ -1866,26 +1866,6 @@
           if (autoDealEnabled && hasEvaluatedCurrent && lastEvalGrade === "A") {
             dealScenario();
             clearAutoDealTimer();
-        primaryBtn.classList.add("timer-active");
-        autoDealBarEl.style.width = "0%";
-        const start = performance.now();
-        const duration = 2000;
-        const finishHoldMs = 140;
-
-        function step(now) {
-          const elapsed = now - start;
-          const progress = Math.min(elapsed / duration, 1);
-          autoDealBarEl.style.width = progress * 100 + "%";
-          if (progress < 1 && autoDealEnabled && hasEvaluatedCurrent && lastEvalGrade === "A") {
-            requestAnimationFrame(step);
-          } else if (progress >= 1 && hasEvaluatedCurrent && autoDealEnabled && lastEvalGrade === "A") {
-            autoDealBarEl.style.width = "100%";
-            autoDealTimeoutId = setTimeout(() => {
-              if (autoDealEnabled && hasEvaluatedCurrent && lastEvalGrade === "A") {
-                dealScenario();
-                clearAutoDealTimer();
-              }
-            }, finishHoldMs);
           }
         }, duration + finishHoldMs);
       }
