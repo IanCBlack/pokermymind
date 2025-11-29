@@ -474,6 +474,8 @@
       }
 
       .primary-btn {
+        position: relative;
+        overflow: hidden;
         margin-top: 0.5rem;
         width: 100%;
         padding: 0.6rem 0.9rem;
@@ -504,10 +506,53 @@
       }
 
       .primary-btn.disabled {
-        opacity: 0.45;
         cursor: default;
-        box-shadow: none;
-        filter: grayscale(0.2) brightness(0.85);
+        pointer-events: none;
+        opacity: 1;
+        filter: none;
+        box-shadow: 0 10px 24px rgba(39, 201, 168, 0.4);
+      }
+
+      .primary-btn .primary-progress {
+        position: absolute;
+        inset: 0;
+        width: 0%;
+        background: linear-gradient(90deg, rgba(235, 238, 243, 0.92), rgba(124, 132, 144, 0.94));
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+          inset 3px 0 22px rgba(5, 6, 10, 0.5);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.18s ease-out;
+        z-index: 0;
+      }
+
+      .primary-btn.timer-active .primary-progress {
+        opacity: 1;
+        animation: primaryFill 2s linear forwards;
+      }
+
+      @keyframes primaryFill {
+        from {
+          width: 0%;
+        }
+        to {
+          width: 100%;
+        }
+      }
+
+      .primary-btn.timer-active {
+        opacity: 1;
+        filter: none;
+        box-shadow: 0 12px 26px rgba(39, 201, 168, 0.38);
+      }
+
+      .primary-btn .primary-content {
+        position: relative;
+        z-index: 1;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
       }
 
       .ghost-btn {
@@ -821,34 +866,6 @@
         background: var(--accent-soft);
       }
 
-      .auto-timer {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.76rem;
-        color: var(--muted);
-      }
-
-      .auto-timer-track {
-        flex: 1;
-        min-width: 0;
-        height: 4px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.08);
-        overflow: hidden;
-      }
-
-      .auto-timer-bar {
-        height: 100%;
-        width: 0%;
-        border-radius: inherit;
-        background: linear-gradient(90deg, var(--accent), #58d1ff);
-        transition: width 0.2s linear;
-      }
-
-      .auto-timer-label {
-        white-space: nowrap;
-      }
     </style>
   </head>
   <body>
@@ -902,9 +919,9 @@
                   type="button"
                   class="auto-toggle"
                   id="autoDealToggle"
-                  aria-pressed="false"
+                  aria-pressed="true"
                 >
-                  Off
+                  On
                 </button>
               </div>
             </div>
@@ -982,14 +999,12 @@
             <!-- 6 + 7. PREFLOP-PRIMARY-BUTTON & AUTO-DEAL TIMER -->
             <div class="preflop-primary">
               <button class="primary-btn" id="primaryBtn">
-                Deal new hand<span>♠</span>
+                <span class="primary-progress" id="autoDealBar"></span>
+                <span class="primary-content">
+                  <span id="primaryLabel">Deal new hand</span>
+                  <span aria-hidden="true" id="primaryIcon">♠</span>
+                </span>
               </button>
-              <div class="auto-timer" id="autoDealTimer" style="display: none">
-                <div class="auto-timer-track">
-                  <div class="auto-timer-bar" id="autoDealBar"></div>
-                </div>
-                <span class="auto-timer-label">Next hand in 2s…</span>
-              </div>
             </div>
 
             <!-- 8 + 9. PREFLOP-FEEDBACK & PREFLOP-STATS -->
@@ -1508,8 +1523,9 @@
       const callBtn = document.getElementById("callBtn");
       const checkBtn = document.getElementById("checkBtn");
       const primaryBtn = document.getElementById("primaryBtn");
+      const primaryLabelEl = document.getElementById("primaryLabel");
+      const primaryIconEl = document.getElementById("primaryIcon");
       const autoDealToggle = document.getElementById("autoDealToggle");
-      const autoDealTimerEl = document.getElementById("autoDealTimer");
       const autoDealBarEl = document.getElementById("autoDealBar");
 
       const gradeLetterEl = document.getElementById("gradeLetter");
@@ -1521,7 +1537,7 @@
       let currentCanonicalHand = "AA";
       let selectedAction = null;
       let hasEvaluatedCurrent = false;
-      let autoDealEnabled = false;
+      let autoDealEnabled = true;
       let awaitingManualDeal = false;
       let autoDealTimeoutId = null;
       let lastEvalGrade = null;
@@ -1605,17 +1621,21 @@
           clearTimeout(autoDealTimeoutId);
           autoDealTimeoutId = null;
         }
-        if (autoDealTimerEl) {
-          autoDealTimerEl.style.display = "none";
+        if (autoDealBarEl) {
+          autoDealBarEl.style.animation = "none";
+          autoDealBarEl.style.width = "0%";
         }
+        primaryBtn.classList.remove("timer-active");
       }
 
       function setPrimaryBtnToEvaluate() {
-        primaryBtn.innerHTML = "Evaluate Decision<span>→</span>";
+        primaryLabelEl.textContent = "Evaluate Decision";
+        primaryIconEl.textContent = "→";
       }
 
       function setPrimaryBtnToDeal() {
-        primaryBtn.innerHTML = "Deal new hand<span>♠</span>";
+        primaryLabelEl.textContent = "Deal new hand";
+        primaryIconEl.textContent = "♠";
       }
 
       function resetResultBox() {
@@ -1733,12 +1753,19 @@
         resetResultBox();
       });
 
+      function syncAutoDealToggle() {
+        if (!autoDealToggle) return;
+        autoDealToggle.setAttribute("aria-pressed", autoDealEnabled ? "true" : "false");
+        autoDealToggle.classList.toggle("active", autoDealEnabled);
+        autoDealToggle.textContent = autoDealEnabled ? "On" : "Off";
+      }
+
+      syncAutoDealToggle();
+
       if (autoDealToggle) {
         autoDealToggle.addEventListener("click", () => {
           autoDealEnabled = !autoDealEnabled;
-          autoDealToggle.setAttribute("aria-pressed", autoDealEnabled ? "true" : "false");
-          autoDealToggle.classList.toggle("active", autoDealEnabled);
-          autoDealToggle.textContent = autoDealEnabled ? "On" : "Off";
+          syncAutoDealToggle();
           if (!autoDealEnabled) {
             clearAutoDealTimer();
             if (hasEvaluatedCurrent && !awaitingManualDeal) {
@@ -1758,30 +1785,29 @@
         }
 
         clearAutoDealTimer();
-        if (!autoDealTimerEl || !autoDealBarEl) {
+        if (!autoDealBarEl) {
           autoDealTimeoutId = setTimeout(() => {
             dealScenario();
+            clearAutoDealTimer();
           }, 2000);
           return;
         }
-        autoDealTimerEl.style.display = "flex";
-        autoDealBarEl.style.width = "0%";
-        const start = performance.now();
-        const duration = 2000;
 
-        function step(now) {
-          const elapsed = now - start;
-          const progress = Math.min(elapsed / duration, 1);
-          autoDealBarEl.style.width = progress * 100 + "%";
-          if (progress < 1 && autoDealEnabled && hasEvaluatedCurrent && lastEvalGrade === "A") {
-            requestAnimationFrame(step);
-          } else if (progress >= 1 && hasEvaluatedCurrent && autoDealEnabled && lastEvalGrade === "A") {
+        primaryBtn.classList.add("timer-active");
+        autoDealBarEl.style.animation = "none";
+        autoDealBarEl.style.width = "0%";
+        // Force reflow so restarting animation works consistently
+        void autoDealBarEl.offsetWidth;
+        autoDealBarEl.style.animation = "primaryFill 2s linear forwards";
+
+        const duration = 2000;
+        const finishHoldMs = 140;
+        autoDealTimeoutId = setTimeout(() => {
+          if (autoDealEnabled && hasEvaluatedCurrent && lastEvalGrade === "A") {
             dealScenario();
             clearAutoDealTimer();
           }
-        }
-
-        requestAnimationFrame(step);
+        }, duration + finishHoldMs);
       }
 
       primaryBtn.addEventListener("click", () => {
