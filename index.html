@@ -1,9 +1,9 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
+<!DOCTYPE html>
+<!-- saved from url=(0040)https://iancblack.github.io/pokermymind/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
   <title>Poker My Mind – Preflop Trainer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
       --bg: #05060a;
@@ -11,7 +11,6 @@
       --card-bg: #151827;
       --accent: #27c9a8;
       --accent-soft: rgba(39, 201, 168, 0.14);
-      --accent-softer: rgba(39, 201, 168, 0.08);
       --danger: #ff5370;
       --text: #f8f9ff;
       --muted: #a3aec7;
@@ -32,7 +31,7 @@
     }
 
     .app-shell {
-      max-width: 1000px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 1.25rem 1rem 2.5rem;
     }
@@ -138,8 +137,8 @@
 
     .card {
       background: linear-gradient(145deg, rgba(18,20,36,0.98), rgba(6,8,16,0.98));
-      border-radius: 22px;
-      padding: 1.1rem;
+      border-radius: 20px;
+      padding: 1rem;
       border: 1px solid var(--border);
       box-shadow:
         0 18px 40px rgba(0,0,0,0.7),
@@ -148,7 +147,7 @@
 
     @media (min-width: 768px) {
       .card {
-        padding: 1.4rem 1.5rem;
+        padding: 1.25rem 1.4rem;
       }
     }
 
@@ -157,7 +156,7 @@
       justify-content: space-between;
       align-items: baseline;
       gap: 0.5rem;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.6rem;
     }
 
     .card-title {
@@ -183,178 +182,68 @@
       font-weight: 600;
     }
 
-    .block-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--muted);
-      margin-bottom: 0.4rem;
-    }
-
-    .preflop-layout {
+    .form-grid {
       display: grid;
-      gap: 1rem;
+      gap: 0.8rem;
     }
 
-    @media (min-width: 780px) {
-      .preflop-layout {
-        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    @media (min-width: 640px) {
+      .form-grid {
+        grid-template-columns: 1.2fr 1fr;
         align-items: flex-start;
       }
     }
 
-    .preflop-left,
-    .preflop-right {
-      display: grid;
-      gap: 0.7rem;
-    }
-
-    .scenario-bar {
+    .field-group {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-    }
-
-    .scenario-pill {
-      display: inline-flex;
-      align-items: center;
+      flex-direction: column;
       gap: 0.35rem;
-      padding: 0.24rem 0.7rem;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      font-size: 0.78rem;
+    }
+
+    label {
+      font-size: 0.8rem;
+      color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 0.11em;
-      color: var(--muted);
-    }
-
-    .scenario-pill strong {
-      color: var(--text);
-      letter-spacing: 0.06em;
-    }
-
-    .auto-deal {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      white-space: nowrap;
-    }
-
-    .auto-label {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
-
-    .auto-toggle {
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(4,6,12,0.8);
-      color: var(--muted);
-      font-size: 0.75rem;
-      padding: 0.18rem 0.8rem;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.11em;
+      letter-spacing: 0.08em;
       font-weight: 600;
-      transition: all 0.16s ease-out;
     }
 
-    .auto-toggle.active {
-      background: var(--accent-soft);
+    select, input[type="number"] {
+      width: 100%;
+      padding: 0.55rem 0.7rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(6,8,16,0.95);
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.18s ease-out, box-shadow 0.18s ease-out, background 0.18s ease-out;
+      appearance: none;
+    }
+
+    select:focus, input[type="number"]:focus {
       border-color: var(--accent);
-      color: var(--accent);
       box-shadow: 0 0 0 1px rgba(39,201,168,0.35);
+      background: rgba(13,17,30,0.98);
     }
 
-    .cards-position-wrap {
-      display: grid;
-      gap: 0.75rem;
-    }
-
-    @media (min-width: 640px) {
-      .cards-position-wrap {
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-      }
-    }
-
-    .dealt-block,
-    .position-block {
-      background: rgba(4,7,15,0.9);
-      border-radius: 16px;
-      border: 1px dashed rgba(255,255,255,0.09);
-      padding: 0.7rem 0.8rem;
-    }
-
-    .card-strip {
+    .hand-row {
       display: flex;
-      gap: 0.7rem;
+      gap: 0.6rem;
       align-items: center;
       flex-wrap: wrap;
     }
 
-    .poker-card {
-      width: 64px;
-      height: 92px;
-      border-radius: 16px;
-      background:
-        radial-gradient(circle at 15% 10%, rgba(255,255,255,0.24), transparent 55%),
-        radial-gradient(circle at 85% 90%, rgba(88,209,255,0.16), transparent 55%),
-        var(--card-bg);
-      border: 1px solid rgba(255,255,255,0.28);
-      box-shadow:
-        0 0 18px rgba(39,201,168,0.24),
-        0 10px 24px rgba(0,0,0,0.75);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .poker-card::before {
-      content: '';
-      position: absolute;
-      inset: 1px;
-      border-radius: 15px;
-      border: 1px solid rgba(0,0,0,0.55);
-      pointer-events: none;
-    }
-
-    .poker-rank {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      margin-bottom: 0.15rem;
-    }
-
-    .poker-suit {
-      font-size: 1.2rem;
-    }
-
-    .poker-suit.red {
-      color: #ff6b8b;
-    }
-
-    .hand-info {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-      min-width: 0;
-    }
-
     .hand-preview {
-      font-family: "JetBrains Mono","SF Mono",ui-monospace,monospace;
-      font-size: 0.85rem;
-      padding: 0.22rem 0.6rem;
+      font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+      font-size: 0.9rem;
+      padding: 0.25rem 0.6rem;
       border-radius: 999px;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.09);
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      max-width: 100%;
     }
 
     .hand-preview span {
@@ -362,46 +251,6 @@
       font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-    }
-
-    .small-note {
-      font-size: 0.78rem;
-      color: var(--muted);
-      opacity: 0.9;
-    }
-
-    .position-meter {
-      display: flex;
-      gap: 0.35rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.35rem;
-    }
-
-    .pos-chip {
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.1);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.11em;
-      color: var(--muted);
-      background: rgba(255,255,255,0.02);
-    }
-
-    .pos-chip.active {
-      border-color: var(--accent);
-      background: var(--accent-soft);
-      color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(39,201,168,0.25);
-    }
-
-    .actions-block {
-      background: rgba(4,7,15,0.9);
-      border-radius: 16px;
-      border: 1px dashed rgba(255,255,255,0.09);
-      padding: 0.7rem 0.8rem 0.8rem;
-      display: grid;
-      gap: 0.6rem;
     }
 
     .actions-row {
@@ -414,7 +263,7 @@
       flex: 1 0 0;
       min-width: 0;
       padding: 0.5rem 0.6rem;
-      border-radius: 12px;
+      border-radius: 10px;
       border: 1px solid var(--border);
       background: rgba(5,8,16,0.98);
       color: var(--muted);
@@ -444,6 +293,7 @@
     }
 
     .primary-btn {
+      margin-top: 0.5rem;
       width: 100%;
       padding: 0.6rem 0.9rem;
       border-radius: 999px;
@@ -476,38 +326,36 @@
       filter: grayscale(0.2) brightness(0.85);
     }
 
-    .auto-timer {
-      margin-top: 0.35rem;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-size: 0.75rem;
+    .ghost-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(4,6,12,0.8);
       color: var(--muted);
+      font-size: 0.78rem;
+      padding: 0.3rem 0.75rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      font-weight: 600;
+      transition: all 0.16s ease-out;
     }
 
-    .auto-timer-track {
-      flex: 1;
-      height: 4px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      overflow: hidden;
-    }
-
-    .auto-timer-bar {
-      height: 100%;
-      width: 0;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent), #58d1ff);
-      transform-origin: left center;
+    .ghost-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
     .result {
-      padding: 0.7rem 0.8rem;
-      border-radius: 16px;
-      background: rgba(5,9,20,0.97);
+      margin-top: 0.8rem;
+      padding: 0.65rem 0.75rem;
+      border-radius: 14px;
+      background: rgba(5,9,20,0.95);
       border: 1px solid rgba(255,255,255,0.06);
       display: grid;
-      gap: 0.45rem;
+      gap: 0.4rem;
     }
 
     .grade-pill {
@@ -566,26 +414,64 @@
     }
 
     .stats-card {
-      margin-top: 0.5rem;
-      padding: 0.65rem 0.8rem;
-      border-radius: 16px;
+      margin-top: 0.7rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 14px;
+      background: rgba(4, 8, 16, 0.9);
       border: 1px solid rgba(255,255,255,0.06);
-      background: rgba(3,6,14,0.98);
       display: grid;
-      gap: 0.5rem;
+      gap: 0.45rem;
     }
 
-    @media (min-width: 640px) {
-      .stats-card {
-        grid-template-columns: minmax(0, 1.1fr) auto auto;
-        align-items: center;
-      }
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .stat-group {
       display: flex;
       flex-wrap: wrap;
       gap: 0.4rem;
+    }
+
+    .report-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .report-grade {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #58d1ff);
+      color: #05060a;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      box-shadow: 0 10px 25px rgba(39,201,168,0.35);
+    }
+
+    .report-text {
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .report-percent {
+      color: var(--text);
+      font-size: 0.95rem;
     }
 
     .stat-chip {
@@ -597,64 +483,16 @@
       color: var(--muted);
     }
 
-    .report-card {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-width: 90px;
-      padding: 0.4rem 0.5rem;
-      border-radius: 999px;
-      background: var(--accent-softer);
-      border: 1px solid rgba(39,201,168,0.45);
-      box-shadow: 0 0 16px rgba(39,201,168,0.3);
-    }
-
-    .report-main {
-      display: flex;
-      align-items: baseline;
-      gap: 0.2rem;
-    }
-
-    .report-letter {
-      font-size: 1.1rem;
-      font-weight: 800;
-    }
-
-    .report-percent {
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .report-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--muted);
-      margin-top: 0.1rem;
-    }
-
-    .ghost-btn {
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(4,6,12,0.8);
-      color: var(--muted);
-      font-size: 0.78rem;
-      padding: 0.3rem 0.75rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      text-transform: uppercase;
-      letter-spacing: 0.11em;
-      font-weight: 600;
-      transition: all 0.16s ease-out;
-      justify-self: flex-end;
-    }
-
-    .ghost-btn:hover {
-      border-color: var(--accent);
+    .stat-chip.good {
+      background: rgba(39, 201, 168, 0.12);
+      border-color: rgba(39, 201, 168, 0.45);
       color: var(--accent);
+    }
+
+    .stat-chip.leaky {
+      background: rgba(255, 83, 112, 0.08);
+      border-color: rgba(255, 83, 112, 0.4);
+      color: var(--danger);
     }
 
     .two-col {
@@ -668,43 +506,16 @@
       }
     }
 
-    label {
-      font-size: 0.8rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-weight: 600;
-    }
-
-    .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-
-    input[type="number"] {
-      width: 100%;
-      padding: 0.55rem 0.7rem;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: rgba(6,8,16,0.95);
-      color: var(--text);
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.18s ease-out, box-shadow 0.18s ease-out, background 0.18s ease-out;
-      appearance: none;
-    }
-
-    input[type="number"]:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(39,201,168,0.35);
-      background: rgba(13,17,30,0.98);
-    }
-
     .muted-note {
       font-size: 0.8rem;
       color: var(--muted);
       margin-top: 0.4rem;
+    }
+
+    .small-note {
+      font-size: 0.76rem;
+      color: var(--muted);
+      opacity: 0.8;
     }
 
     .about-text {
@@ -725,8 +536,145 @@
       opacity: 0.7;
     }
 
-    ul {
-      margin-top: 0.3rem;
+    /* Scenario strip & cards */
+    .scenario-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .scenario-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.22rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      color: var(--muted);
+    }
+
+    .scenario-pill strong {
+      color: var(--text);
+      letter-spacing: 0.06em;
+    }
+
+    .card-strip {
+      margin-top: 0.25rem;
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .poker-card {
+      width: 62px;
+      height: 88px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255,255,255,0.24), transparent 55%),
+        radial-gradient(circle at 85% 90%, rgba(88,209,255,0.16), transparent 55%),
+        var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.28);
+      box-shadow:
+        0 0 18px rgba(39,201,168,0.24),
+        0 10px 24px rgba(0,0,0,0.75);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .poker-card::before {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: 13px;
+      border: 1px solid rgba(0,0,0,0.55);
+      pointer-events: none;
+    }
+
+    .poker-rank {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.15rem;
+    }
+
+    .poker-suit {
+      font-size: 1.2rem;
+    }
+
+    .poker-suit.red {
+      color: #ff6b8b;
+    }
+
+    .card-row-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    /* Auto deal UI */
+    .auto-deal {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .auto-toggle {
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(4,6,12,0.8);
+      color: var(--muted);
+      font-size: 0.75rem;
+      padding: 0.18rem 0.8rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.11em;
+      font-weight: 600;
+      transition: all 0.16s ease-out;
+    }
+
+    .auto-toggle.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(39,201,168,0.35);
+    }
+
+    .auto-timer {
+      margin-top: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .auto-timer-track {
+      flex: 1;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+
+    .auto-timer-bar {
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), #58d1ff);
+      transform-origin: left center;
+    }
+
+    .auto-timer-label {
+      white-space: nowrap;
     }
   </style>
 </head>
@@ -761,124 +709,95 @@
           <span class="pill">Random scenario · Unopened pot</span>
         </div>
 
-        <div class="preflop-layout">
-          <div class="preflop-left">
-            <div class="scenario-bar">
-              <div class="scenario-pill" id="scenarioPosition">
-                POS: <strong>BTN (Button)</strong>
+        <div class="form-grid">
+          <div>
+            <div class="field-group">
+              <label>Scenario</label>
+              <div class="scenario-row">
+                <div class="scenario-pill" id="scenarioPosition">POS: <strong>SB (Small Blind)</strong></div>
+                <div class="auto-deal">
+                  <span class="small-note">Auto deal if A</span>
+                  <button type="button" class="auto-toggle" id="autoDealToggle" aria-pressed="false">Off</button>
+                </div>
               </div>
-              <div class="auto-deal">
-                <span class="auto-label">Auto deal if A</span>
-                <button type="button" class="auto-toggle" id="autoDealToggle" aria-pressed="false">Off</button>
+              <div class="small-note">
+                Unopened cash-game pot. Blinds posted, action is on you preflop.
               </div>
             </div>
 
-            <div class="cards-position-wrap">
-              <div class="dealt-block">
-                <div class="block-label">Dealt cards</div>
-                <div class="card-strip">
-                  <div class="poker-card" id="card1">
-                    <div class="poker-rank" id="card1Rank">A</div>
-                    <div class="poker-suit" id="card1Suit">♠</div>
-                  </div>
-                  <div class="poker-card" id="card2">
-                    <div class="poker-rank" id="card2Rank">A</div>
-                    <div class="poker-suit" id="card2Suit">♥</div>
-                  </div>
-                  <div class="hand-info">
-                    <div class="hand-preview" id="handPreview">
-                      <span>Hand</span>
-                      <strong>AA</strong>
-                    </div>
-                    <div class="small-note">
-                      Cards glow, you decide: fold, check, limp, or open-raise.
-                    </div>
-                  </div>
+            <div class="field-group">
+              <label>Dealt cards</label>
+              <div class="card-strip">
+                <div class="poker-card" id="card1">
+                  <div class="poker-rank" id="card1Rank">8</div>
+                  <div class="poker-suit red" id="card1Suit">♦</div>
                 </div>
-              </div>
-
-              <div class="position-block">
-                <div class="block-label">Your position</div>
-                <div class="position-meter">
-                  <span class="pos-chip" data-band="early">Early</span>
-                  <span class="pos-chip" data-band="middle">Middle</span>
-                  <span class="pos-chip" data-band="late">Late</span>
-                  <span class="pos-chip" data-band="blinds">Blinds</span>
+                <div class="poker-card" id="card2">
+                  <div class="poker-rank" id="card2Rank">7</div>
+                  <div class="poker-suit" id="card2Suit">♣</div>
                 </div>
-                <div class="small-note" id="positionNote">
-                  Late position: you can open wider and use your positional edge.
+                <div class="card-row-info">
+                  <div class="hand-preview" id="handPreview">
+                    <span>Hand</span>
+                    <strong>87o</strong>
+                  </div>
+                  <div class="small-note">Cards glow, you decide: fold, check, limp, or open-raise.</div>
                 </div>
               </div>
             </div>
 
-            <div class="actions-block">
-              <div class="block-label">Actions</div>
+            <div class="field-group">
+              <label>Your action</label>
               <div class="actions-row" id="actionButtons">
-                <button type="button" class="action-btn" data-action="FOLD">Fold</button>
-                <button type="button" class="action-btn" data-action="CHECK" id="checkBtn" style="display:none;">
-                  Check
-                </button>
-                <button
-                  type="button"
-                  class="action-btn"
-                  data-action="CALL"
-                  id="callBtn"
-                  title="Limping = calling the big blind preflop instead of raising. In the BB with no raise, you check instead of calling."
-                >
+                <button type="button" class="action-btn selected disabled" data-action="FOLD" aria-disabled="true">Fold</button>
+                <button type="button" class="action-btn disabled" data-action="CHECK" id="checkBtn" style="display:none;" aria-disabled="true">Check</button>
+                <button type="button" class="action-btn disabled" data-action="CALL" id="callBtn" title="Limping = calling the big blind preflop instead of raising." aria-disabled="true">
                   Call / Limp
                 </button>
-                <button type="button" class="action-btn" data-action="RAISE">Raise / Open</button>
+                <button type="button" class="action-btn disabled" data-action="RAISE" aria-disabled="true">Raise / Open</button>
               </div>
-              <button class="primary-btn" id="primaryBtn">
-                Evaluate decision
-                <span>→</span>
-              </button>
-              <div class="auto-timer" id="autoDealTimer" style="display:none;">
-                <div class="auto-timer-track">
-                  <div class="auto-timer-bar" id="autoDealBar"></div>
-                </div>
-                <span class="auto-timer-label">Next hand in 2s…</span>
+            </div>
+
+            <button class="primary-btn" id="primaryBtn">Deal new hand<span>♠</span></button>
+            <div class="auto-timer" id="autoDealTimer" style="display:none;">
+              <div class="auto-timer-track">
+                <div class="auto-timer-bar" id="autoDealBar"></div>
               </div>
+              <span class="auto-timer-label">Next hand in 2s…</span>
             </div>
           </div>
 
-          <div class="preflop-right">
-            <div class="block-label">Feedback</div>
+          <div>
             <div class="result" id="resultBox">
               <div class="grade-pill">
                 <span class="grade-letter grade-badge-good" id="gradeLetter">A</span>
                 <span class="grade-context" id="gradeContext">Good discipline.</span>
               </div>
-              <div class="recommendation" id="recommendation">
-                Recommended: Folding is correct.
-              </div>
-              <p class="explanation" id="explanation">
-                Deal a hand, pick your action, then see whether you played too tight, too loose, or just right based on
-                simple opening ranges by position.
-              </p>
-              <div class="meta">
+              <div class="recommendation" id="recommendation">Recommended: Folding is correct.</div>
+              <p class="explanation" id="explanation">87o misses the SB opening chart, so mucking keeps you out of trouble. Connected ranks give straight potential when you do see flops.</p>
+              <div class="meta" id="metaInfo">
                 <span>Spot: Unopened pot</span>
                 <span>Model: Simple cash-game open ranges</span>
               </div>
             </div>
-
-            <div class="block-label" style="margin-top:0.7rem;">Statistical data / odds</div>
-            <div class="stats-card">
-              <div class="stat-group">
-                <span class="stat-chip" id="statTotal">Decisions: 0</span>
-                <span class="stat-chip" id="statGood">Good (A/B): 0</span>
-                <span class="stat-chip" id="statLeaky">Leaky (C–F): 0</span>
-              </div>
-              <div class="report-card">
-                <div class="report-main">
-                  <span class="report-letter" id="reportGrade">–</span>
-                  <span class="report-percent" id="reportPercent">—%</span>
+            <div class="stats-card" aria-label="Session status">
+              <div class="stats-row" id="statsRow">
+                <div class="stat-group">
+                  <span class="stat-chip" id="statTotal">Decisions: 4</span>
+                  <span class="stat-chip good" id="statGood">Good (A/B): 4</span>
+                  <span class="stat-chip leaky" id="statLeaky">Leaky (C–F): 0</span>
                 </div>
-                <div class="report-label">Overall grade</div>
+                <div class="report-card" aria-label="Overall report card">
+                  <span class="report-grade" id="reportGrade">A</span>
+                  <span class="report-text">
+                    Overall grade
+                    <span class="report-percent" id="reportPercent">100%</span>
+                  </span>
+                </div>
+                <button type="button" class="ghost-btn" id="resetStatsBtn">
+                  Reset stats
+                </button>
               </div>
-              <button type="button" class="ghost-btn" id="resetStatsBtn">
-                Reset stats
-              </button>
             </div>
           </div>
         </div>
@@ -897,21 +816,21 @@
         </div>
 
         <div class="two-col">
-          <div class="field-grid">
+          <div class="form-grid">
             <div class="field-group">
               <label for="potSize">Pot size before villain bets</label>
-              <input type="number" id="potSize" min="0" step="0.01" placeholder="e.g. 10" />
+              <input type="number" id="potSize" min="0" step="0.01" placeholder="e.g. 10">
             </div>
             <div class="field-group">
               <label for="betSize">Bet you’re facing</label>
-              <input type="number" id="betSize" min="0" step="0.01" placeholder="e.g. 5" />
+              <input type="number" id="betSize" min="0" step="0.01" placeholder="e.g. 5">
             </div>
             <div class="field-group">
               <label for="outs">Your number of outs</label>
-              <input type="number" id="outs" min="0" max="20" step="1" placeholder="e.g. 9 for a flush draw" />
+              <input type="number" id="outs" min="0" max="20" step="1" placeholder="e.g. 9 for a flush draw">
             </div>
             <button class="primary-btn" id="calculateOddsBtn">
-              Calculate pot odds
+              Calculate Pot Odds
               <span>≈</span>
             </button>
           </div>
@@ -948,7 +867,7 @@
               A proof-of-concept trainer focused on decision quality over short-term results.
             </div>
           </div>
-          <span class="pill">Prototype · v0.6</span>
+          <span class="pill">Prototype · v0.5</span>
         </div>
         <div class="about-text">
           <p>
@@ -964,14 +883,13 @@
           </p>
           <ul>
             <li>Random hand + position generator</li>
-            <li>One evaluation per hand (no spamming for the answer)</li>
+            <li>One evaluation per hand (no spammy retries)</li>
             <li>Big blind-specific “Check vs limp” teaching</li>
-            <li>Optional auto-deal that fires new hands after strong decisions</li>
+            <li>Auto Deal mode with a 2s cadence for fast reps</li>
             <li>A basic pot odds helper for draw math</li>
           </ul>
           <p>
-            Future steps: build-out for facing opens & 3-bets, postflop decisions, and full hand review with leak
-            analysis.
+            Future steps: facing opens &amp; 3-bets, postflop decisions, and full hand review with leak analysis.
           </p>
         </div>
       </section>
@@ -1053,13 +971,85 @@
 
     function canonicalHand(rank1, rank2, suitedFlag) {
       if (rank1 === rank2) {
-        return rank1 + rank2;
+        return rank1 + rank2; // pairs: AA, KK, etc.
       }
       const idx1 = rankOrder.indexOf(rank1);
       const idx2 = rankOrder.indexOf(rank2);
       const high = idx1 <= idx2 ? rank1 : rank2;
       const low = idx1 <= idx2 ? rank2 : rank1;
       return `${high}${low}${suitedFlag}`;
+    }
+
+    function analyzeHandTraits(hand) {
+      const suited = hand.endsWith('s');
+      const pair = hand.length === 2 || hand[0] === hand[1];
+      const ranks = pair ? [hand[0], hand[1]] : [hand[0], hand[1]];
+      const connectors = !pair && Math.abs(rankOrder.indexOf(ranks[0]) - rankOrder.indexOf(ranks[1])) === 1;
+      const broadwayRanks = ['A', 'K', 'Q', 'J', 'T'];
+      const broadway = ranks.every((r) => broadwayRanks.includes(r));
+      const blockers = ranks.filter((r) => ['A', 'K', 'Q'].includes(r));
+
+      return { suited, pair, connectors, broadway, blockers, ranks };
+    }
+
+    function buildPreflopExplanation({ hand, position, action, isInOpenRange }) {
+      const traits = analyzeHandTraits(hand);
+      const reasons = [];
+
+      if (action === 'CHECK' && position === 'BB') {
+        reasons.push(`Checking ${hand} takes the free flop and lets you realize equity without risk.`);
+      } else if (action === 'RAISE') {
+        if (isInOpenRange) {
+          reasons.push(`${hand} lives inside the recommended ${position} opening range.`);
+        } else {
+          reasons.push(`${hand} falls outside the preferred ${position} opens and drifts into marginal territory.`);
+        }
+      } else if (action === 'FOLD') {
+        if (isInOpenRange) {
+          reasons.push(`Folding forfeits a profitable open with ${hand} from ${position}.`);
+        } else {
+          reasons.push(`${hand} misses the ${position} opening chart, so mucking keeps you out of trouble.`);
+        }
+      } else if (action === 'CALL') {
+        reasons.push(`Calling preflop without a raise plan leaves ${hand} under-realized.`);
+      }
+
+      if (['BTN', 'CO'].includes(position) && action === 'RAISE') {
+        reasons.push('Late position leverage lets you pressure blinds and control postflop decisions.');
+      }
+
+      if (position === 'SB' && action === 'RAISE') {
+        reasons.push('Opening from the small blind compensates for playing the rest of the hand out of position.');
+      }
+
+      if (traits.pair) {
+        reasons.push('Pocket pairs retain showdown value and can flop sets against callers.');
+      } else {
+        if (traits.broadway) {
+          reasons.push('Broadway combinations make top pairs with strong kickers versus blind defenses.');
+        }
+        if (traits.connectors) {
+          reasons.push('Connected ranks give straight potential when you do see flops.');
+        }
+      }
+
+      if (traits.suited) {
+        reasons.push('Suitedness adds playability through flush backdoors and draws.');
+      }
+
+      if (action === 'RAISE' && traits.blockers.length) {
+        reasons.push(`High-card blockers (${traits.blockers.join('/')}) cut down premium combos that can 3-bet you.`);
+      }
+
+      if (action === 'RAISE' && ['BTN', 'CO'].includes(position)) {
+        reasons.push('Both blinds must defend wide and out of position, so opens print fold equity.');
+      }
+
+      if (action === 'CHECK' && position === 'BB') {
+        reasons.push('With no price to continue, you realize equity versus the entire field.');
+      }
+
+      return reasons.join(' ');
     }
 
     function evaluatePreflopOpen(position, hand, userAction) {
@@ -1075,7 +1065,7 @@
               good: true,
               context: 'Safe but passive.',
               recommended: 'Raising prints more value.',
-              explanation: `Checking ${hand} in the big blind is never terrible when you get a free flop, but raising strong hands here builds a pot when you are ahead.`,
+              explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
             };
           } else {
             return {
@@ -1083,7 +1073,7 @@
               good: true,
               context: 'Correct free check.',
               recommended: 'Checking is ideal.',
-              explanation: `With ${hand} in the big blind and no raise, checking to see a free flop is the highest-EV default. You realize your equity without risking chips preflop.`,
+              explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
             };
           }
         }
@@ -1093,7 +1083,7 @@
             good: false,
             context: 'Too tight.',
             recommended: 'Check instead of folding.',
-            explanation: `Folding in the big blind when you can check for free throws away equity. Use the check option to see a flop instead of mucking.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
         // Raises in BB fall through to the generic logic below
@@ -1106,7 +1096,7 @@
             good: true,
             context: 'Solid open.',
             recommended: 'Raise / open this hand.',
-            explanation: `${hand} is in your recommended open range from ${position}. Opening here applies pressure and prints value long term.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
         if (userAction === 'FOLD') {
@@ -1115,7 +1105,7 @@
             good: false,
             context: 'Too tight.',
             recommended: 'Raise this hand instead of folding.',
-            explanation: `Folding ${hand} from ${position} is leaving money on the table. This hand should be opened in most lineups.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
         if (userAction === 'CALL') {
@@ -1124,7 +1114,7 @@
             good: false,
             context: 'Leaky limp.',
             recommended: 'Raise, don\'t limp.',
-            explanation: `Limping ${hand} from ${position} is usually dominated and hard to play. Raising is higher EV and keeps your range aggressive.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
       } else {
@@ -1134,7 +1124,7 @@
             good: false,
             context: 'Too loose.',
             recommended: 'Fold this hand preflop.',
-            explanation: `${hand} is outside the recommended open range from ${position}. Opening hands like this loses money over time.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
         if (userAction === 'CALL') {
@@ -1143,7 +1133,7 @@
             good: false,
             context: 'Weak limp.',
             recommended: 'Just fold this hand.',
-            explanation: `Calling or limping ${hand} here is rarely profitable. In an unopened pot, you want to raise strong hands and fold the rest.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
         if (userAction === 'FOLD') {
@@ -1152,7 +1142,7 @@
             good: true,
             context: 'Good discipline.',
             recommended: 'Folding is correct.',
-            explanation: `${hand} is not in your profitable open range from ${position}. Folding keeps your range tight and avoids marginal spots.`,
+            explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
           };
         }
       }
@@ -1162,10 +1152,11 @@
         good: true,
         context: 'Reasonable.',
         recommended: 'Borderline, but not terrible.',
-        explanation: `This is a borderline spot for ${hand} from ${position}. Against tighter fields, folding is fine; against weak players, opening may be okay.`,
+        explanation: buildPreflopExplanation({ hand, position, action: userAction, isInOpenRange }),
       };
     }
 
+    // Scenario dealing
     const positions = ['UTG','MP','CO','BTN','SB','BB'];
     const positionLabels = {
       UTG: 'UTG (Early)',
@@ -1174,22 +1165,6 @@
       BTN: 'BTN (Button)',
       SB: 'SB (Small Blind)',
       BB: 'BB (Big Blind)',
-    };
-
-    const positionBands = {
-      UTG: 'early',
-      MP: 'middle',
-      CO: 'late',
-      BTN: 'late',
-      SB: 'blinds',
-      BB: 'blinds',
-    };
-
-    const positionBandNotes = {
-      early: 'Early position: many players left to act, so play tighter and stick to strong hands.',
-      middle: 'Middle position: you can add some hands, but still respect the players left to act.',
-      late: 'Late position: you can open wider and lean on your positional edge.',
-      blinds: 'Blinds: you are out of position postflop, so be selective with the hands you play.',
     };
 
     const ranks = ['A','K','Q','J','T','9','8','7','6','5','4','3','2'];
@@ -1201,14 +1176,11 @@
     ];
 
     const scenarioPositionEl = document.getElementById('scenarioPosition');
-    const positionNoteEl = document.getElementById('positionNote');
-    const positionChips = document.querySelectorAll('.pos-chip');
-
+    const handPreviewEl = document.getElementById('handPreview').querySelector('strong');
     const card1RankEl = document.getElementById('card1Rank');
     const card1SuitEl = document.getElementById('card1Suit');
     const card2RankEl = document.getElementById('card2Rank');
     const card2SuitEl = document.getElementById('card2Suit');
-    const handPreviewValueEl = document.querySelector('#handPreview strong');
 
     const actionButtonsEl = document.getElementById('actionButtons');
     const callBtn = document.getElementById('callBtn');
@@ -1223,13 +1195,6 @@
     const recommendationEl = document.getElementById('recommendation');
     const explanationEl = document.getElementById('explanation');
 
-    const statTotalEl = document.getElementById('statTotal');
-    const statGoodEl = document.getElementById('statGood');
-    const statLeakyEl = document.getElementById('statLeaky');
-    const reportGradeEl = document.getElementById('reportGrade');
-    const reportPercentEl = document.getElementById('reportPercent');
-    const resetStatsBtn = document.getElementById('resetStatsBtn');
-
     let currentPosition = 'BTN';
     let currentCanonicalHand = 'AA';
     let selectedAction = null;
@@ -1237,47 +1202,45 @@
     let autoDealEnabled = false;
     let awaitingManualDeal = false;
     let autoDealTimeoutId = null;
+    let lastEvalGrade = null;
 
     function randomFrom(arr) {
       return arr[Math.floor(Math.random() * arr.length)];
-    }
-
-    function displayRank(rank) {
-      return rank === 'T' ? '10' : rank;
-    }
-
-    function updatePositionUI() {
-      const label = positionLabels[currentPosition] || currentPosition;
-      scenarioPositionEl.innerHTML = `POS: <strong>${label}</strong>`;
-      const band = positionBands[currentPosition] || 'middle';
-
-      positionChips.forEach(chip => {
-        chip.classList.toggle('active', chip.dataset.band === band);
-      });
-
-      positionNoteEl.textContent = positionBandNotes[band];
     }
 
     function updateActionsForPosition() {
       if (!callBtn || !checkBtn) return;
       const allActionBtns = actionButtonsEl.querySelectorAll('.action-btn');
 
-      if (currentPosition === 'BB') {
+      const isBigBlind = currentPosition === 'BB';
+
+      if (isBigBlind) {
+        // Show Check, disable Call/Limp
         checkBtn.style.display = 'flex';
-        callBtn.classList.add('disabled');
-        callBtn.setAttribute('aria-disabled', 'true');
         callBtn.title = 'In the big blind with no raise, you don\'t call – checking is free.';
       } else {
         checkBtn.style.display = 'none';
-        callBtn.classList.remove('disabled');
-        callBtn.removeAttribute('aria-disabled');
         callBtn.title = 'Limping = calling the big blind preflop instead of raising.';
+
+        // If we were on CHECK before and moved off BB, clear back to no selection
         if (selectedAction === 'CHECK') {
           selectedAction = null;
         }
       }
 
+      // Disable all buttons once a decision has been evaluated
+      // or disable Call/Limp specifically in the big blind.
       allActionBtns.forEach(b => {
+        const isCallButton = b.dataset.action === 'CALL';
+        const shouldDisable = hasEvaluatedCurrent || (isBigBlind && isCallButton);
+
+        b.classList.toggle('disabled', shouldDisable);
+        if (shouldDisable) {
+          b.setAttribute('aria-disabled', 'true');
+        } else {
+          b.removeAttribute('aria-disabled');
+        }
+
         b.classList.toggle('selected', b.dataset.action === selectedAction);
       });
     }
@@ -1290,36 +1253,47 @@
       if (autoDealTimerEl) {
         autoDealTimerEl.style.display = 'none';
       }
-      if (autoDealBarEl) {
-        autoDealBarEl.style.width = '0%';
-      }
     }
 
     function setPrimaryBtnToEvaluate() {
-      primaryBtn.innerHTML = 'Evaluate decision<span>→</span>';
+      primaryBtn.innerHTML = 'Evaluate Decision<span>→</span>';
     }
 
     function setPrimaryBtnToDeal() {
       primaryBtn.innerHTML = 'Deal new hand<span>♠</span>';
     }
 
+    function resetResultBox() {
+      gradeLetterEl.textContent = '–';
+      gradeLetterEl.classList.remove('grade-badge-good', 'grade-badge-bad');
+      gradeContextEl.textContent = 'Awaiting decision.';
+      recommendationEl.textContent = 'Pick an action and evaluate to see feedback.';
+      explanationEl.textContent = 'Lock in an action for this hand to get a recommendation and grade.';
+    }
+
     function resetEvaluateState() {
       hasEvaluatedCurrent = false;
       awaitingManualDeal = false;
+      lastEvalGrade = null;
+      clearAutoDealTimer();
+      setPrimaryBtnToEvaluate();
       primaryBtn.classList.remove('disabled');
       primaryBtn.removeAttribute('aria-disabled');
       primaryBtn.disabled = false;
-      setPrimaryBtnToEvaluate();
-      clearAutoDealTimer();
     }
 
     function dealScenario() {
+      // Random position
       currentPosition = randomFrom(positions);
+      const label = positionLabels[currentPosition] || currentPosition;
+      scenarioPositionEl.innerHTML = `POS: <strong>${label}</strong>`;
 
+      // Random distinct cards
       const r1 = randomFrom(ranks);
       const s1 = randomFrom(suits);
       let r2 = randomFrom(ranks);
       let s2 = randomFrom(suits);
+      // Ensure not identical card
       while (r2 === r1 && s2.symbol === s1.symbol) {
         r2 = randomFrom(ranks);
         s2 = randomFrom(suits);
@@ -1328,28 +1302,30 @@
       const suitedFlag = r1 === r2 ? '' : (s1.symbol === s2.symbol ? 's' : 'o');
       currentCanonicalHand = canonicalHand(r1, r2, suitedFlag || (s1.symbol === s2.symbol ? 's' : 'o'));
 
-      card1RankEl.textContent = displayRank(r1);
+      // Update visual cards
+      card1RankEl.textContent = r1;
       card1SuitEl.textContent = s1.symbol;
       card1SuitEl.classList.toggle('red', s1.color === 'red');
 
-      card2RankEl.textContent = displayRank(r2);
+      card2RankEl.textContent = r2;
       card2SuitEl.textContent = s2.symbol;
       card2SuitEl.classList.toggle('red', s2.color === 'red');
 
-      handPreviewValueEl.textContent = currentCanonicalHand;
+      handPreviewEl.textContent = currentCanonicalHand;
 
+      // Clear selected action on new deal
       selectedAction = null;
       actionButtonsEl.querySelectorAll('.action-btn').forEach(b => b.classList.remove('selected'));
-
-      updatePositionUI();
-      updateActionsForPosition();
+      resetResultBox();
       resetEvaluateState();
+      updateActionsForPosition();
     }
 
     actionButtonsEl.addEventListener('click', (e) => {
       const btn = e.target.closest('.action-btn');
       if (!btn) return;
       if (btn.classList.contains('disabled') || btn.getAttribute('aria-disabled') === 'true') {
+        // Ignore clicks on disabled buttons (e.g., Call/Limp in BB)
         return;
       }
       selectedAction = btn.dataset.action;
@@ -1359,7 +1335,6 @@
 
     // Stats in localStorage
     const statsKey = 'pokerMyMind_preflopStats';
-
     function loadStats() {
       try {
         const raw = localStorage.getItem(statsKey);
@@ -1369,7 +1344,6 @@
         return { total: 0, good: 0, leaky: 0 };
       }
     }
-
     function saveStats(stats) {
       try {
         localStorage.setItem(statsKey, JSON.stringify(stats));
@@ -1377,36 +1351,40 @@
         // ignore
       }
     }
-
-    function overallGradeFromStats(stats) {
-      if (!stats.total) return { letter: '–', percent: null };
-      const pct = (stats.good / stats.total) * 100;
+    function calculateReportCard(stats) {
+      if (!stats.total) {
+        return { letter: '–', percent: '0%' };
+      }
+      const percent = Math.round((stats.good / stats.total) * 100);
       let letter = 'F';
-      if (pct >= 80) letter = 'A';
-      else if (pct >= 65) letter = 'B';
-      else if (pct >= 50) letter = 'C';
-      else if (pct >= 35) letter = 'D';
-      return { letter, percent: Math.round(pct) };
+      if (percent >= 90) {
+        letter = 'A';
+      } else if (percent >= 80) {
+        letter = 'B';
+      } else if (percent >= 70) {
+        letter = 'C';
+      } else if (percent >= 60) {
+        letter = 'D';
+      }
+      return { letter, percent: `${percent}%` };
     }
-
     function updateStatsUI() {
       const stats = loadStats();
-      statTotalEl.textContent = `Decisions: ${stats.total}`;
-      statGoodEl.textContent = `Good (A/B): ${stats.good}`;
-      statLeakyEl.textContent = `Leaky (C–F): ${stats.leaky}`;
-      const overall = overallGradeFromStats(stats);
-      reportGradeEl.textContent = overall.letter;
-      reportPercentEl.textContent =
-        overall.percent === null ? '—%' : `${overall.percent}%`;
+      document.getElementById('statTotal').textContent = `Decisions: ${stats.total}`;
+      document.getElementById('statGood').textContent = `Good (A/B): ${stats.good}`;
+      document.getElementById('statLeaky').textContent = `Leaky (C–F): ${stats.leaky}`;
+      const report = calculateReportCard(stats);
+      document.getElementById('reportGrade').textContent = report.letter;
+      document.getElementById('reportPercent').textContent = report.percent;
     }
-
     updateStatsUI();
 
-    resetStatsBtn.addEventListener('click', () => {
+    document.getElementById('resetStatsBtn').addEventListener('click', () => {
       localStorage.removeItem(statsKey);
       updateStatsUI();
     });
 
+    // Auto deal toggle
     if (autoDealToggle) {
       autoDealToggle.addEventListener('click', () => {
         autoDealEnabled = !autoDealEnabled;
@@ -1416,7 +1394,24 @@
 
         if (!autoDealEnabled) {
           clearAutoDealTimer();
-          if (hasEvaluatedCurrent) {
+          // If we had just graded under auto mode, switch to manual "Deal new hand" mode
+          if (hasEvaluatedCurrent && !awaitingManualDeal) {
+            awaitingManualDeal = true;
+            primaryBtn.classList.remove('disabled');
+            primaryBtn.removeAttribute('aria-disabled');
+            primaryBtn.disabled = false;
+            setPrimaryBtnToDeal();
+          }
+        } else if (hasEvaluatedCurrent) {
+          // If we toggle on auto-deal after grading in manual mode, start the auto cadence only after A grades
+          awaitingManualDeal = false;
+          if (lastEvalGrade === 'A') {
+            primaryBtn.classList.add('disabled');
+            primaryBtn.setAttribute('aria-disabled', 'true');
+            primaryBtn.disabled = true;
+            startAutoDealCountdown();
+          } else {
+            clearAutoDealTimer();
             awaitingManualDeal = true;
             primaryBtn.classList.remove('disabled');
             primaryBtn.removeAttribute('aria-disabled');
@@ -1428,6 +1423,9 @@
     }
 
     function startAutoDealCountdown() {
+      if (lastEvalGrade !== 'A') {
+        return;
+      }
       clearAutoDealTimer();
       if (!autoDealTimerEl || !autoDealBarEl) {
         autoDealTimeoutId = setTimeout(() => {
@@ -1458,26 +1456,33 @@
     }
 
     primaryBtn.addEventListener('click', () => {
-      if (awaitingManualDeal && !autoDealEnabled) {
+      // If we're in manual mode and waiting to deal the next hand,
+      // this button acts as "Deal new hand"
+      if (awaitingManualDeal && (!autoDealEnabled || lastEvalGrade !== 'A')) {
         dealScenario();
         return;
       }
 
       if (hasEvaluatedCurrent) {
+        // Already graded this spot; ignore until a new hand is dealt
         return;
       }
 
       if (!selectedAction) {
+        // Require the user to actually pick an action before grading
         gradeLetterEl.textContent = '–';
         gradeLetterEl.classList.remove('grade-badge-good', 'grade-badge-bad');
-        gradeContextEl.textContent = 'Pick an action.';
-        recommendationEl.textContent = 'Choose Fold, Check, Call/Limp, or Raise to get feedback.';
-        explanationEl.textContent =
-          'The trainer only grades a decision after you lock in an action for this hand.';
+        gradeContextEl.textContent = 'Pick an action first.';
+        recommendationEl.textContent = 'Choose Fold, Check, Call/Limp, or Raise.';
+        explanationEl.textContent = 'The trainer only grades a decision after you lock in an action for this hand.';
         return;
       }
 
-      const evalResult = evaluatePreflopOpen(currentPosition, currentCanonicalHand, selectedAction);
+      const position = currentPosition;
+      const hand = currentCanonicalHand;
+      const evalResult = evaluatePreflopOpen(position, hand, selectedAction);
+
+      lastEvalGrade = evalResult.grade;
 
       gradeLetterEl.textContent = evalResult.grade;
       gradeLetterEl.classList.toggle('grade-badge-good', evalResult.good);
@@ -1496,14 +1501,19 @@
       saveStats(stats);
       updateStatsUI();
 
+      // Lock this scenario – only one graded decision per hand
       hasEvaluatedCurrent = true;
+      updateActionsForPosition();
 
       if (autoDealEnabled && evalResult.grade === 'A') {
+        // Auto mode: lock button, show timer, auto-deal after 2s when user nails an A
         primaryBtn.classList.add('disabled');
         primaryBtn.setAttribute('aria-disabled', 'true');
         primaryBtn.disabled = true;
         startAutoDealCountdown();
       } else {
+        // Manual mode or auto paused on non-A grades: turn this button into "Deal new hand"
+        clearAutoDealTimer();
         awaitingManualDeal = true;
         primaryBtn.classList.remove('disabled');
         primaryBtn.removeAttribute('aria-disabled');
@@ -1514,6 +1524,7 @@
 
     // ---------- Pot odds helper ----------
     function approximateEquityFromOuts(outs) {
+      // Rough rule-of-thumb with one card to come
       return outs * 2.2;
     }
 
@@ -1559,5 +1570,6 @@
     // Deal an initial scenario on load
     dealScenario();
   </script>
-</body>
-</html>
+
+
+</body></html>
