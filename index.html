@@ -274,7 +274,7 @@
       }
 
       .preflop-actions {
-        padding: 0.7rem 0.9rem 0.3rem;
+        padding: 0.7rem 0.9rem 0.9rem;
         border-radius: 16px;
         background: rgba(5, 8, 18, 0.9);
         border: 1px solid var(--border);
@@ -633,28 +633,34 @@
       .report-card {
         display: inline-flex;
         align-items: center;
-        gap: 0.45rem;
-        padding: 0.25rem 0.6rem;
+        gap: 0.65rem;
+        padding: 0.5rem 1.2rem;
         border-radius: 999px;
         background: rgba(255, 255, 255, 0.02);
         border: 1px solid rgba(255, 255, 255, 0.06);
+        transform: scale(1.05);
       }
 
       .report-grade {
-        font-size: 1rem;
-        font-weight: 700;
+        font-size: 1.4rem;
+        font-weight: 800;
+        padding: 0.15rem 0.55rem;
+        border-radius: 14px;
+        background: rgba(39, 201, 168, 0.12);
+        border: 1px solid rgba(39, 201, 168, 0.35);
       }
 
       .report-text {
-        font-size: 0.78rem;
+        font-size: 0.95rem;
         color: var(--muted);
+        line-height: 1.35;
       }
 
       .report-percent {
-        margin-left: 0.25rem;
-        font-size: 0.78rem;
+        margin-left: 0.35rem;
+        font-size: 0.95rem;
         color: var(--accent);
-        font-weight: 600;
+        font-weight: 700;
       }
 
       .stat-chip.good {
@@ -932,12 +938,12 @@
                 <div class="section-label">Your position</div>
                 <div class="position-panel">
                   <div class="position-map" aria-label="Table positions">
-                    <div class="position-seat" data-pos="UTG">UTG</div>
-                    <div class="position-seat" data-pos="MP">MP</div>
-                    <div class="position-seat" data-pos="CO">CO</div>
-                    <div class="position-seat" data-pos="BTN">BTN</div>
-                    <div class="position-seat" data-pos="SB">SB</div>
-                    <div class="position-seat" data-pos="BB">BB</div>
+                    <div class="position-seat" data-pos="UTG">1. UTG</div>
+                    <div class="position-seat" data-pos="MP">2. MP</div>
+                    <div class="position-seat" data-pos="CO">3. CO</div>
+                    <div class="position-seat" data-pos="BTN">4. BTN</div>
+                    <div class="position-seat" data-pos="SB">5. SB</div>
+                    <div class="position-seat" data-pos="BB">6. BB</div>
                   </div>
                   <p class="position-note small-note" id="positionNote">
                     SB (Small Blind): you act first after the flop, so play tighter and prefer strong or playable hands.
@@ -1463,12 +1469,12 @@
       // Scenario dealing
       const positions = ["UTG", "MP", "CO", "BTN", "SB", "BB"];
       const positionLabels = {
-        UTG: "UTG (Early)",
-        MP: "MP (Middle)",
-        CO: "CO (Cutoff)",
-        BTN: "BTN (Button)",
-        SB: "SB (Small Blind)",
-        BB: "BB (Big Blind)",
+        UTG: "1. UTG (Early)",
+        MP: "2. MP (Middle)",
+        CO: "3. CO (Cutoff)",
+        BTN: "4. BTN (Button)",
+        SB: "5. SB (Small Blind)",
+        BB: "6. BB (Big Blind)",
       };
 
       const positionDescriptions = {
@@ -1524,6 +1530,14 @@
         return arr[Math.floor(Math.random() * arr.length)];
       }
 
+      function applyActionSelection(action) {
+        selectedAction = action;
+        if (!actionButtonsEl) return;
+        actionButtonsEl.querySelectorAll(".action-btn").forEach((b) => {
+          b.classList.toggle("selected", b.dataset.action === selectedAction);
+        });
+      }
+
       function updatePositionDisplay() {
         if (!positionNoteEl || !positionSeats) return;
         const label = positionLabels[currentPosition] || currentPosition;
@@ -1560,7 +1574,7 @@
 
           // If we were on CHECK before and moved off BB, clear selection
           if (selectedAction === "CHECK") {
-            selectedAction = null;
+            applyActionSelection(null);
           }
         }
 
@@ -1568,6 +1582,22 @@
         allActionBtns.forEach((b) => {
           b.classList.toggle("selected", b.dataset.action === selectedAction);
         });
+      }
+
+      function setDefaultActionForPosition() {
+        const defaultAction = currentPosition === "BB" ? "CHECK" : "FOLD";
+        const targetBtn =
+          defaultAction === "CHECK"
+            ? checkBtn
+            : actionButtonsEl.querySelector('.action-btn[data-action="FOLD"]');
+
+        if (
+          targetBtn &&
+          !targetBtn.classList.contains("disabled") &&
+          targetBtn.getAttribute("aria-disabled") !== "true"
+        ) {
+          applyActionSelection(defaultAction);
+        }
       }
 
       function clearAutoDealTimer() {
@@ -1638,11 +1668,11 @@
         handPreviewEl.textContent = currentCanonicalHand;
 
         // Clear selected action on new deal
-        selectedAction = null;
-        actionButtonsEl.querySelectorAll(".action-btn").forEach((b) => b.classList.remove("selected"));
+        applyActionSelection(null);
         resetResultBox();
         resetEvaluateState();
         updateActionsForPosition();
+        setDefaultActionForPosition();
       }
 
       actionButtonsEl.addEventListener("click", (e) => {
@@ -1652,9 +1682,7 @@
           // Ignore clicks on disabled buttons (e.g., Call/Limp in BB)
           return;
         }
-        selectedAction = btn.dataset.action;
-        actionButtonsEl.querySelectorAll(".action-btn").forEach((b) => b.classList.remove("selected"));
-        btn.classList.add("selected");
+        applyActionSelection(btn.dataset.action);
       });
 
       // Stats in localStorage
